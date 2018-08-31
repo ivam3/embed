@@ -2,8 +2,12 @@
 # 
 # Embed Metasploit Payload in Legtim APK with Termux
 #
+# This script fixed argument "-x" in metasploit framework
+# And contain script to embed origin .Apk named EMBED
+#
+#
 # To install it execute $ bash fix-arg-x
-# When it finish just run embed execute $ bash embed
+# When it finish just run embed, execute $ bash embed
 #
 #Remember , EMBED need Metasploit to get Works.
 #

