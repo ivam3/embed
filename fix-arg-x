@@ -126,7 +126,7 @@ cp $HOME/java/.embed/apk.rb $msf/lib/msf/core/payload/
 		rm -rf $EMBED
 	else
 		cd $HOME/java/
-		wget
+		wget https://raw.githubusercontent.com/ivam3/embed/master/EMBED
 		chmod 511 $HOME/java/EMBED
 		ln -s $HOME/java/EMBED $PREFIX/bin/
 	fi
