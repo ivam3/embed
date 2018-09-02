@@ -5,7 +5,7 @@ trap ctrl_c 2
 function ctrl_c () {
                 echo "
 		"
-                printf "$yellow [!]$red Going me on https://t.me/Ivam3by_Cinderella$reset
+                printf "$Y [!]$R Going me on https://t.me/Ivam3by_Cinderella$W
                 \n"
         }
 
