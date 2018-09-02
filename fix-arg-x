@@ -12,7 +12,7 @@ IFS=$'\n\t'
         W='\033[0m'
 	arm=$(find $PREFIX/share/ -name "jdk8_arm.tar.gz" -type f)
 	aarch=$(find $PREFIX/share/ -name "jdk8_aarch64.tar.gz" -type f)
-	EMBED=$(find $HOME/ -name "embed" -type d)
+	EMBED=$HOME/embed
 
 trap ctrl_c 2
 function ctrl_c () {
