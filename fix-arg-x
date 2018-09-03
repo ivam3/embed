@@ -86,10 +86,11 @@ msf=$(find $HOME -name "metasploit-framework" -type d)
 		Chao_chao
 	else
 		apt update && apt upgrade -y
-		pkg install git wget tar -y
+		pkg install git wget tar apksigner aapt -y
 		cd $HOME
 		git clone https://github.com/ivam3/java.git
-		mkdir -p $HOME/java/unsigned
+		mkdir -p $HOME/java/handler
+		mkdir -p $HOME/java/unsign
 		mkdir -p $HOME/java/finished
 		chmod 711 -R $HOME/java/
 		chmod 777 -R $HOME/java/openjdk/lib
@@ -115,6 +116,7 @@ msf=$(find $HOME -name "metasploit-framework" -type d)
 
 ln -s $HOME/embed/openjdk/zzipalign $PREFIX/bin/
 ln -s $HOME/java/.embed/signapk $PREFIX/bin/
+ln -s $HOME/java/apktool $PREFIX/bin/
 bash $HOME/java/Ivam3
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
 cp $HOME/java/.embed/apk.rb $msf/lib/msf/core/payload/
