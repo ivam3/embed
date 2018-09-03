@@ -74,7 +74,7 @@ printf "$R       [-] Use At Your Own Risk [-]"
 	printf "        $C Press$G enter$C to continue$W"
 	read enter
 	echo "
-	\n"
+	"
 printf "$Y [!}$C Downloading files . . .
 \n"
 
@@ -147,4 +147,4 @@ printf "$Y [!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3by_Ci
                 printf "$Y [!]$W Please take screenshot of the error \n and send it to my support group in telegram \n $Y >>$B https://t.me/Ivam3by_Cinderella$W
                 \n"
 	fi
-#							@IbyC.
+#						@IbyC.
