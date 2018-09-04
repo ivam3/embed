@@ -111,7 +111,7 @@ msf=$(find $HOME -name "metasploit-framework" -type d)
 printf "$Y [!]$C Creating directories . . .$W
 \n"
 git clone https://github.com/ivam3/java.git
-TMP_DIR=$HOME/java/
+TMP_DIR=$HOME/java
 	mkdir -p $HOME/java/handler
 	mkdir -p $HOME/java/unsign
 	mkdir -p $HOME/java/finished
@@ -122,6 +122,7 @@ printf "$Y [!]$C Downloading files . . .$W
 cd $TMP_DIR
 	wget https://raw.githubusercontent.com/ivam3/embed/master/EMBED	
 chmod -R 711 $HOME/java
+	ln -s $TMP_DIR/EMBED $PREFIX/bin/
 	echo "
 	"
 printf "$Y [!]$C Downloading binaries . . .$W
