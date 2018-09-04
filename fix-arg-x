@@ -74,7 +74,7 @@ printf "$R       [-] Use At Your Own Risk [-]"
 	read enter
 	echo "
 	"
-printf "$Y [!]$C Cleaning up . . .
+printf "$Y [!]$C Cleaning up . . .$W
 \n"
 	if [ -d $HOME/java ]; then
 		rm -rf $HOME/java
@@ -102,13 +102,13 @@ msf=$(find $HOME -name "metasploit-framework" -type d)
 		\n"
 		Chao_chao
 	else
-		printf "$Y [!]$C Upgrading && Downloading packages . . .
+		printf "$Y [!]$C Upgrading && Downloading packages . . .$W
 		\n"
 		apt update && apt upgrade -y
 		pkg install git wget tar apksigner aapt -y
 	fi
 
-printf "$Y [!]$C Creating directories . . .
+printf "$Y [!]$C Creating directories . . .$W
 \n"
 git clone https://github.com/ivam3/java.git
 TMP_DIR=$HOME/java/
@@ -117,14 +117,14 @@ TMP_DIR=$HOME/java/
 	mkdir -p $HOME/java/finished
 	echo "
 	"
-printf "$Y [!]$C Downloading files . . .
+printf "$Y [!]$C Downloading files . . .$W
 \n"
 cd $TMP_DIR
 	wget https://raw.githubusercontent.com/ivam3/embed/master/EMBED	
 chmod -R 711 $HOME/java
 	echo "
 	"
-printf "$Y [!]$C Downloading binaries . . .
+printf "$Y [!]$C Downloading binaries . . .$W
 \n"
 bash $TMP_DIR/Ivam3
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
