@@ -36,7 +36,6 @@ function Chao_chao {
 	echo "
         "
 }
-
 	echo $(clear)
         printf "$C"
         echo "         -{ IbyC > fix-arg-x } "
@@ -75,8 +74,26 @@ printf "$R       [-] Use At Your Own Risk [-]"
 	read enter
 	echo "
 	"
-printf "$Y [!}$C Downloading files . . .
+printf "$Y [!]$C Cleaning up . . .
 \n"
+	if [ -d $HOME/java ]; then
+		rm -rf $HOME/java
+	fi
+	if [ -L $PREFIX/bin/signapk ]; then
+                rm $PREFIX/bin/signapk
+        fi
+        if [ -L $PREFIX/bin/zzipalign ]; then
+                rm $PREFIX/bin/zzipalign
+        fi
+	if [ -L $PREFIX/bin/apktool ]; then
+                rm $PREFIX/bin/apktool
+        fi
+	if [ -L $PREFIX/bin/java ] || [ -e $PREFIX/bin/java ]; then
+                rm $PREFIX/bin/java
+        fi
+	if [ -L $PREFIX/bin/EMBED ] || [ -e $PREFIX/bin/EMBED ]; then
+                rm $PREFIX/bin/EMBED
+        fi
 
 msf=$(find $HOME -name "metasploit-framework" -type d)
 	
@@ -85,54 +102,37 @@ msf=$(find $HOME -name "metasploit-framework" -type d)
 		\n"
 		Chao_chao
 	else
+		printf "$Y [!]$C Upgrading && Downloading packages . . .
+		\n"
 		apt update && apt upgrade -y
 		pkg install git wget tar apksigner aapt -y
-		cd $HOME
-		git clone https://github.com/ivam3/java.git
-		mkdir -p $HOME/java/handler
-		mkdir -p $HOME/java/unsign
-		mkdir -p $HOME/java/finished
-		chmod 711 -R $HOME/java/
-		chmod 777 -R $HOME/java/openjdk/lib
-		chmod 777 $HOME/java/.embed/*
-		chmod 777 $HOME/java/openjdk/java
-		chmod 777 $HOME/java/openjdk/bin/java
-		chmod 777 $HOME/java/apktool
-		chmod 777 $HOME/java/openjdk/apktool-2.2.2.jar
 	fi
 
-	if [ -L $PREFIX/bin/signapk ]; then
-                rm $PREFIX/bin/signapk
-        fi
-	if [ -L $PREFIX/bin/zzipalign ]; then
-                rm $PREFIX/bin/zzipalign
-	fi
-	if [ -L $PREFIX/bin/publickey.pk8 ]; then
-                rm $PREFIX/bin/publickey.pk8
-        fi
-	if [ -L $PREFIX/bin/publickey.x509.pem ]; then
-                rm $PREFIX/bin/publickey.x509.pem
-        fi
-
-ln -s $HOME/embed/openjdk/zzipalign $PREFIX/bin/
-ln -s $HOME/java/.embed/signapk $PREFIX/bin/
-ln -s $HOME/java/apktool $PREFIX/bin/
-bash $HOME/java/Ivam3
+printf "$Y [!]$C Creating directories . . .
+\n"
+git clone https://github.com/ivam3/java.git
+TMP_DIR=$HOME/java/
+	mkdir -p $HOME/java/handler
+	mkdir -p $HOME/java/unsign
+	mkdir -p $HOME/java/finished
+	echo "
+	"
+printf "$Y [!]$C Downloading files . . .
+\n"
+cd $TMP_DIR
+	wget https://raw.githubusercontent.com/ivam3/embed/master/EMBED	
+chmod -R 711 $HOME/java
+	echo "
+	"
+printf "$Y [!]$C Downloading binaries . . .
+\n"
+bash $TMP_DIR/Ivam3
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
 cp $HOME/java/.embed/apk.rb $msf/lib/msf/core/payload/
 
 	if [ -d $EMBED ]; then
-		cp $EMBED/EMBED $HOME/java/
-		chmod 511 $HOME/java/EMBED
-		ln -s $HOME/java/EMBED $PREFIX/bin/
 		rm -rf $EMBED
-	else
-		cd $HOME/java/
-		wget https://raw.githubusercontent.com/ivam3/embed/master/EMBED
-		chmod 511 $HOME/java/EMBED
-		ln -s $HOME/java/EMBED $PREFIX/bin/
 	fi
-
 	if [ -f $arm ] || [ -f $aarch ]; then
 		printf "$C"
 		Chao_chao
