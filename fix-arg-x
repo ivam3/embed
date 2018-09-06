@@ -130,6 +130,7 @@ printf "$Y [!]$C Downloading binaries . . .$W
 bash $TMP_DIR/Ivam3
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
 cp $HOME/java/.embed/apk.rb $msf/lib/msf/core/payload/
+ln -s $TMP_DIR/.embed/signapk $PREFIX/bin/
 
 	if [ -d $EMBED ]; then
 		rm -rf $EMBED
