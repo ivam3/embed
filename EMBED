@@ -159,8 +159,8 @@ function sign {
 		printf "$C [IbyC]$M Signing the .Apk with apksigner tool. . .$W \n"
 		cd $TMP_DIR/unsign
 		sleep 3
-		apksigner -p Ivam3byCinderella keystore $TMP_DIR/unsign/output.apk $TMP_DIR/finished/$MYAPK
-		rm $TMP_DIR/unsign/output.apk
+		apksigner -p Ivam3byCinderella keystore output.apk $TMP_DIR/finished/$MYAPK
+		rm output.apk
 		cd $HOME
 		printf "$G \n \t DONE!!
 		$W"
