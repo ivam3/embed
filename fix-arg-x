@@ -13,6 +13,7 @@ IFS=$'\n\t'
 	arm=$(find $PREFIX/share/ -name "jdk8_arm.tar.gz" -type f)
 	aarch=$(find $PREFIX/share/ -name "jdk8_aarch64.tar.gz" -type f)
 	EMBED=$HOME/embed
+	USR=$(whoami)
 
 trap ctrl_c 2
 function ctrl_c () {
@@ -94,6 +95,9 @@ printf "$Y [!]$C Cleaning up . . .$W
 	if [ -L $PREFIX/bin/EMBED ] || [ -e $PREFIX/bin/EMBED ]; then
                 rm $PREFIX/bin/EMBED
         fi
+	if [ -e $PREFIX/bin/sudo ] || [ -d $HOME/.suroot ]; then
+		sudo chown -R $USR:$USR $HOME/.suroot
+	fi
 
 msf=$(find $HOME -name "metasploit-framework" -type d)
 	

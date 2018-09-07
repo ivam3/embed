@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 IFS=$'\n\t'
-#trap ctrl_c 2
+trap ctrl_c 2
 function ctrl_c () {
                 echo "
 		"
