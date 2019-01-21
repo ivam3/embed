@@ -124,6 +124,7 @@ TMP_DIR=$HOME/java
 printf "$Y [!]$C Downloading files . . .$W
 \n"
 wget https://raw.githubusercontent.com/ivam3/embed/master/EMBED -O $PREFIX/bin/EMBED
+wget https://raw.githubusercontent.com/ivam3/embed/master/set-apktool -O $PREFIX/bin/set-apktool
 chmod -R 711 $TMP_DIR
 chmod 777 $PREFIX/bin/EMBED
 echo "
