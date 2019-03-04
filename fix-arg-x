@@ -18,7 +18,7 @@ IFS=$'\n\t'
 trap ctrl_c 2
 function ctrl_c () {
 	echo
-	printf "$Y [!]$R Going me on https://t.me/Ivam3by_Cinderella$W
+	printf "$Y [!]$R Going me on https://t.me/Ivam3byCinderella$W
 	\n"
 }
 function Chao_chao {
@@ -99,16 +99,14 @@ printf "$Y [!]$C Cleaning up . . .$W
 		sudo chown -R $USR:$USR $HOME/.suroot
 	fi
 
-msf=$(find $HOME -name "metasploit-framework" -type d)
+msf=$(find $PREFIX/opt/ -name "metasploit-framework" -type d)
 	
 	if [ -z $msf ]; then
-		printf "$Y [W]$R metasploit framework it doesn't exist , please install it before$W
-		\n"
+		printf "$Y[W]$R metasploit framework it doesn't exist , please install it before$W\n"
 		Chao_chao
 	else
-		printf "$Y [!]$C Upgrading && Downloading packages . . .$W
-		\n"
-		apt update && apt upgrade -y
+		printf "$Y[!]$C Upgrading && Downloading packages . . .$W\n"
+		pkg update -y && pkg upgrade -y
 		pkg install git wget tar apksigner aapt -y
 	fi
 
@@ -116,25 +114,22 @@ printf "$Y [!]$C Creating directories . . .$W
 \n"
 git clone https://github.com/ivam3/java.git
 TMP_DIR=$HOME/java
-	mkdir -p $TMP_DIR/handler
-	mkdir -p $TMP_DIR/unsign
-	mkdir -p $TMP_DIR/finished
-	echo "
-	"
-printf "$Y [!]$C Downloading files . . .$W
-\n"
+mkdir -p $TMP_DIR/handler
+mkdir -p $TMP_DIR/unsign
+mkdir -p $TMP_DIR/finished
+printf "$Y\n\n[!]$C Downloading files . . .$W\n"
 wget https://raw.githubusercontent.com/ivam3/embed/master/EMBED -O $PREFIX/bin/EMBED
-wget https://raw.githubusercontent.com/ivam3/embed/master/set-apktool -O $PREFIX/bin/set-apktool
+wget https://raw.githubusercontent.com/ivam3/embed/master/set-apktool -O $PREFIX/bin/chapktool
 chmod -R 711 $TMP_DIR
 chmod 777 $PREFIX/bin/EMBED
-echo "
-"
-printf "$Y [!]$C Downloading binaries . . .$W
-\n"
+chmod 777 $PREFIX/bin/chapktool
+printf "$Y\n\n[!]$C Downloading binaries . . .$W\n"
 bash $TMP_DIR/Ivam3
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
-cp $HOME/java/.embed/apk.rb $msf/lib/msf/core/payload/
-cp $TMP_DIR/.embed/signapk $PREFIX/bin/
+curl https://raw.githubusercontent.com/ivam3/java/master/.embed/apk.rb -o $msf/lib/msf/core/payload/apk.rb
+curl https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -o $PREFIX/bin/
+chmod 777 $PREFIX/bin/signapk
+chmod 777 $msf/lib/msf/core/payload/apk.rb
 
 	if [ -d $EMBED ]; then
 		rm -rf $EMBED
@@ -143,16 +138,18 @@ cp $TMP_DIR/.embed/signapk $PREFIX/bin/
 		printf "$C"
 		Chao_chao
 		cd $HOME
-printf "$Y [IbyC]$C Finish !!$W \n \t Now you can hide a metasploit payload in legitim .APK \n \t \t Now try it by executing the command$G => EMBED
-$W \n"
-printf "$Y [!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3by_Cinderella$W
-\n"
+printf "$Y[IbyC]$C Finish !!$W \n \t Now you can hide a metasploit payload in legitim .APK \n \t \t Now try it by executing the command$G => EMBED$W\n\n"
+printf "$Y[!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3_Bot$W\n\n"
 	else
 		printf "$R"
 		Chao_chao
-                printf "$R [W]$W O-ops!! Something was wrong
-                \n"
-                printf "$Y [!]$W Please take screenshot of the error \n and send it to my support group in telegram \n $Y >>$B https://t.me/Ivam3by_Cinderella$W
-                \n"
+                printf "$R[W]$W O-ops!! Something was wrong\n"
+                printf "$Y[!]$W Please take screenshot of the error\nand send it to my bot in telegram \n $Y >>$B https://t.me/Ivam3_Bot$W\n\n"
 	fi
+if [ -f $arm ]; then
+	rm -rf $arm
+fi
+if [ -f aarch ]; then
+	rm -rf $aarch
+fi
 #						@IbyC.
