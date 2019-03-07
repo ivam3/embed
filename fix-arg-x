@@ -127,7 +127,7 @@ printf "$Y\n\n[!]$C Downloading binaries . . .$W\n"
 bash $TMP_DIR/Ivam3
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
 curl https://raw.githubusercontent.com/ivam3/java/master/.embed/apk.rb -o $msf/lib/msf/core/payload/apk.rb
-curl https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -o $PREFIX/bin/
+curl https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -o $PREFIX/bin/signapk
 chmod 777 $PREFIX/bin/signapk
 chmod 777 $msf/lib/msf/core/payload/apk.rb
 
