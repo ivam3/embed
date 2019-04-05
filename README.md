@@ -21,9 +21,9 @@
 #
 # $ mv java/openjdk/java /data/data/com.termux/files/usr/bin
 #
-# JOIN ME ON >> https://t.me/ivam3
+# JOIN ME ON >> https://t.me/Ivam3byCinderella
 #
-# GOIN TO MY COMMUNITY ON >> https://t.me/Ivam3by_Cinderella
+# HAVE A TROUBLE COM TO >> https://t.me/Ivam3_Bot
 #
 # Please refer to http://java.com/licensereadme
 
