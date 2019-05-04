@@ -107,7 +107,7 @@ msf=$(find $PREFIX/opt/ -name "metasploit-framework" -type d)
 	else
 		printf "$Y[!]$C Upgrading && Downloading packages . . .$W\n"
 		pkg update -y && pkg upgrade -y
-		pkg install git wget tar apksigner aapt -y
+		pkg install git wget axel tar apksigner aapt -y
 	fi
 
 printf "$Y [!]$C Creating directories . . .$W
@@ -118,7 +118,7 @@ mkdir -p $TMP_DIR/handler
 mkdir -p $TMP_DIR/unsign
 mkdir -p $TMP_DIR/finished
 printf "$Y\n\n[!]$C Downloading files . . .$W\n"
-wget https://raw.githubusercontent.com/ivam3/embed/master/EMBED -O $PREFIX/bin/EMBED
+axel https://raw.githubusercontent.com/ivam3/embed/master/EMBED -O $PREFIX/bin/EMBED
 wget https://raw.githubusercontent.com/ivam3/embed/master/set-apktool -O $PREFIX/bin/chapktool
 chmod -R 711 $TMP_DIR
 chmod 777 $PREFIX/bin/EMBED
