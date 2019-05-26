@@ -37,6 +37,58 @@ function Chao_chao {
 	echo "
         "
 }
+testing() {
+	testjava=$(command -v java)
+	testembed=$(command -v EMBED)
+	testapktool=$(command -v apktool)
+	testsignapk=$(command -v signapk)
+	testapksigner=$(command -v apksigner)
+printf "$Y[!]-> Testing installation . . .\n"
+sleep 1
+printf "$W Java         "
+sleep 1
+if [ ! -z $testjava ]; then
+        printf "$G > OK!!\n"
+else
+        printf "$R > ERROR$W\n"
+fi
+printf "$W Apktool      "
+sleep 1
+if [ ! -z $testapktool ]; then
+        printf "$G > OK!!\n"
+else
+        printf "$R > ERROR$W\n"
+fi
+printf "$W Signapk      "
+sleep 1
+if [ ! -z $testsignapk ]; then
+        printf "$G > OK!!\n"
+else
+        printf "$R > ERROR$W\n"
+fi
+printf "$W Apksigner    "
+sleep 1
+if [ ! -z $testapksigner ]; then
+        printf "$G > OK!!\n"
+else
+        printf "$R > ERROR$W\n"
+fi
+printf "$W EMBED                "
+sleep 1
+if [ ! -z $testembed ]; then
+        printf "$G > OK!!\n"
+else
+        printf "$R > ERROR$W\n"
+fi
+printf "$W Arg -x	"
+sleep 1
+if [ -e $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb ]; then
+	printf "$G > OK!!\n"
+else
+	printf "$R > ERROR$W\n"
+fi
+sleep 2
+}
 	echo $(clear)
         printf "$C"
         echo "         -{ IbyC > fix-arg-x } "
@@ -134,22 +186,25 @@ chmod 777 $msf/lib/msf/core/payload/apk.rb
 	if [ -d $EMBED ]; then
 		rm -rf $EMBED
 	fi
-	if [ -f $arm ] || [ -f $aarch ]; then
-		printf "$C"
-		Chao_chao
-		cd $HOME
-printf "$Y[IbyC]$C Finish !!$W \n \t Now you can hide a metasploit payload in legitim .APK \n \t \t Now try it by executing the command$G => EMBED$W\n\n"
-printf "$Y[!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3_Bot$W\n\n"
-	else
-		printf "$R"
-		Chao_chao
-                printf "$R[W]$W O-ops!! Something was wrong\n"
-                printf "$Y[!]$W Please take screenshot of the error\nand send it to my bot in telegram \n $Y >>$B https://t.me/Ivam3_Bot$W\n\n"
-	fi
+#	if [ -f $arm ] || [ -f $aarch ]; then
+printf "$C"
+Chao_chao
+sleep 1
+testing
+cd $HOME
+echo ""
+if [ ! -z $testjava ] && [ ! -z $testembed ] && [ ! -z $testapktool ] && [ ! -z $testsignapk ] && [ ! -z $testapksigner ]; then
+	printf "$Y[IbyC]$C Finish !!$W \n \t Now you can hide a metasploit payload in legitim .APK \n \t \t Now try it by executing the command$G => EMBED$W\n\n"
+	printf "$Y[!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3_Bot$W\n\n"
+else
+	printf "$R"
+	printf "$R[W]$W O-ops!! Something was wrong\n"
+	printf "$Y[!]$W Please take screenshot of the error\nand send it to my bot in telegram \n $Y >>$B https://t.me/Ivam3_Bot$W\n\n"
+fi
 if [ -f $arm ]; then
 	rm -rf $arm
 fi
-if [ -f aarch ]; then
+if [ -f $aarch ]; then
 	rm -rf $aarch
 fi
 #						@IbyC.
