@@ -43,6 +43,7 @@ testing() {
 	testapktool=$(command -v apktool)
 	testsignapk=$(command -v signapk)
 	testapksigner=$(command -v apksigner)
+	testapkrb=$(cat $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb | grep -o "unsign")
 printf "$Y[!]-> Testing installation . . .\n"
 sleep 1
 printf "$W Java         "
@@ -82,7 +83,7 @@ else
 fi
 printf "$W Arg -x	"
 sleep 1
-if [ -e $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb ]; then
+if [ ! -z $testapkrb ]; then
 	printf "$G > OK!!\n"
 else
 	printf "$R > ERROR$W\n"
@@ -193,7 +194,7 @@ sleep 1
 testing
 cd $HOME
 echo ""
-if [ ! -z $testjava ] && [ ! -z $testembed ] && [ ! -z $testapktool ] && [ ! -z $testsignapk ] && [ ! -z $testapksigner ]; then
+if [ ! -z $testjava ] && [ ! -z $testembed ] && [ ! -z $testapktool ] && [ ! -z $testsignapk ] && [ ! -z $testapksigner ] && [ ! -z $testapkrb ]; then
 	printf "$Y[IbyC]$C Finish !!$W \n \t Now you can hide a metasploit payload in legitim .APK \n \t \t Now try it by executing the command$G => EMBED$W\n\n"
 	printf "$Y[!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3_Bot$W\n\n"
 else
