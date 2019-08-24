@@ -130,6 +130,9 @@ printf "$R       [-] Use At Your Own Risk [-]"
 	"
 printf "$Y [!]$C Cleaning up . . .$W
 \n"
+	if [ -e $HOME/installEMBED ]; then
+		rm $HOME/installEMBED
+	fi
 	if [ -d $HOME/java ]; then
 		rm -rf $HOME/java
 	fi
