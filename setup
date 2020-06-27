@@ -16,12 +16,12 @@ IFS=$'\n\t'
 	USR=$(whoami)
 
 trap ctrl_c 2
-function ctrl_c () {
+ctrl_c() {
 	echo
 	printf "$Y [!]$R Going me on https://t.me/Ivam3byCinderella$W
 	\n"
 }
-function Chao_chao {
+Chao_chao() {
 	echo "
         "
         printf "$C"
@@ -190,7 +190,6 @@ chmod 777 $msf/lib/msf/core/payload/apk.rb
 	if [ -d $EMBED ]; then
 		rm -rf $EMBED
 	fi
-#	if [ -f $arm ] || [ -f $aarch ]; then
 printf "$C"
 Chao_chao
 sleep 1
