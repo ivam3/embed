@@ -21,22 +21,6 @@ ctrl_c() {
 	printf "$Y [!]$R Going me on https://t.me/Ivam3byCinderella$W
 	\n"
 }
-Chao_chao() {
-	echo "
-        "
-        printf "$C"
-        echo "#-----THANKS TO MY MASTER CINDERELLA-----#"
-        echo "#                                        #"
-        echo "#             People don't die           #"
-        echo "#    If they still live in the hearts    #"
-        echo "#           of their loved ones          #"
-        echo "#       We love her ... We miss her      #"
-        echo "#                                        #"
-        echo "#-------------------RIP------------------#"
-        printf "$W"
-	echo "
-        "
-}
 testing() {
 	testjava=$(command -v java)
 	testembed=$(command -v EMBED)
@@ -90,44 +74,15 @@ else
 fi
 sleep 2
 }
-	echo $(clear)
-        printf "$C"
-        echo "         -{ IbyC > fix-arg-x } "
-        echo "   -{ SO > Android - Only for Termux } "
-        echo "              -{ Coded by } "
-        printf "$G"
-        echo "      =============================="
-        echo "      .___.                 ______,"
-        echo "      |   |__ ______   ___  \_____ \ "
-        echo "      |   \ \/ /\__ \ /   \   _(__ <,"
-	echo "      |   |\   / __ \| Y Y \ /      \ "       
-	echo "      |___| \_/ (____|__|_| /______ /"
-        echo "                     \/    \/      \/ "
-        echo "      ====== By ___ Cinderella ======"
-	echo
-printf "$C"
-        echo "          [---] Join me on [---]"
-        echo "[-] www.youtube.com/c/ivam3bycinderella [-]"
-        echo "            [-] t.me/ivam3 [-]"
-        sleep 1
-printf "$R"
-        echo
-        echo "          [---] DISCLAIMER [---]"
-printf "$W"
-        echo " This file fix issues in Metasploit Framework"
-        echo "  in argument '-x' to get embed payload into"
-	echo "               legitim apk
-	\n"
-        echo " If the law is violated with it's use,"
-        echo "  This would be the responsibility of "
-        echo "        the user who handled it"
-printf "$R       [-] Use At Your Own Risk [-]"
-        echo
-        echo
-	printf "        $C Press$G enter$C to continue$W"
-	read enter
-	echo "
-	"
+
+if [ $PWD/.IbyC/embed ]
+then
+	bash $PWD/.IbyC/embed
+else
+	printf "$R\n[ERR-banner]-> Going to https://t.me/Ivam3_Bot$W\n"
+	exit
+fi
+
 printf "$Y [!]$C Cleaning up . . .$W
 \n"
 	if [ -e $HOME/installEMBED ]; then
@@ -159,40 +114,29 @@ msf=$(find $PREFIX/opt/ -name "metasploit-framework" -type d)
 	
 	if [ -z $msf ]; then
 		printf "$Y[W]$R metasploit framework it doesn't exist , please install it before$W\n"
-		Chao_chao
 	else
 		printf "$Y[!]$C Upgrading && Downloading packages . . .$W\n"
-		pkg update -y && pkg upgrade -y
-		pkg install git wget axel tar apksigner aapt -y
+		yes |pkg update && pkg upgrade; pkg install git wget axel tar apksigner aapt
 	fi
 
-printf "$Y [!]$C Creating directories . . .$W
-\n"
+printf "$Y\n\n[!]$C Creating directories . . .$W\n"
 git clone https://github.com/ivam3/java.git
 TMP_DIR=$HOME/java
 mkdir -p $TMP_DIR/handler
 mkdir -p $TMP_DIR/unsign
 mkdir -p $TMP_DIR/finished
 printf "$Y\n\n[!]$C Downloading files . . .$W\n"
-axel https://raw.githubusercontent.com/ivam3/embed/master/EMBED -o $PREFIX/bin/EMBED
-wget https://raw.githubusercontent.com/ivam3/embed/master/set-apktool -O $PREFIX/bin/chapktool
 chmod -R 711 $TMP_DIR
-chmod 777 $PREFIX/bin/EMBED
-chmod 777 $PREFIX/bin/chapktool
 printf "$Y\n\n[!]$C Downloading binaries . . .$W\n"
 bash $TMP_DIR/Ivam3.unstable
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
 curl https://raw.githubusercontent.com/ivam3/java/master/.embed/apk.rb -o $msf/lib/msf/core/payload/apk.rb
 curl https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -o $PREFIX/bin/signapk
-chmod 777 $PREFIX/bin/signapk
-chmod 777 $msf/lib/msf/core/payload/apk.rb
-
-	if [ -d $EMBED ]; then
-		rm -rf $EMBED
-	fi
-printf "$C"
-Chao_chao
-sleep 1
+chmod 711 $PREFIX/bin/signapk
+chmod 711 $msf/lib/msf/core/payload/apk.rb
+printf "$Y\n\n[!]$C Installing ruby gems . . .$W\n"
+command -v bundle > /dev/null >2&1 || gem install bundle
+bundle install
 testing
 cd $HOME
 echo ""
