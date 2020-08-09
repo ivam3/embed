@@ -17,10 +17,14 @@ class String
   def cyan;           "\033[36m#{self}\033[0m" end
   def gray;           "\033[37m#{self}\033[0m" end
 end
-
+user = 'id -u'
 #def banner()
   system('bash ${PWD}/.IbyC/embed')
 #end
+unless ! user == '0'
+  puts "[ERR-user]─➤ You must to be a root user\n".red
+  exit(1)
+end
 
 # Find the activity thatapk_backdoor.rb  is opened when you click the app icon
 def findlauncheractivity(amanifest)
