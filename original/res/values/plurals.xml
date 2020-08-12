@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="delete_alert_message">
+        <item quantity="other">Are you sure you want to delete %1$d videos?</item>
+        <item quantity="zero">Are you sure you want to delete the video?</item>
+        <item quantity="one">Are you sure you want to delete the video?</item>
+    </plurals>
+    <plurals name="delete_alert_title">
+        <item quantity="other">Delete videos?</item>
+        <item quantity="zero">Delete video?</item>
+        <item quantity="one">Delete video?</item>
+    </plurals>
+    <plurals name="delete_photo_alert_message">
+        <item quantity="other">Are you sure you want to delete %1$d photos?</item>
+        <item quantity="zero">Are you sure you want to delete the photo?</item>
+        <item quantity="one">Are you sure you want to delete the photo?</item>
+    </plurals>
+    <plurals name="delete_photo_alert_title">
+        <item quantity="other">Delete photos?</item>
+        <item quantity="zero">Delete photo?</item>
+        <item quantity="one">Delete photo?</item>
+    </plurals>
+</resources>

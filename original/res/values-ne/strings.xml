@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="abc_action_bar_home_description">गृह खोज्नुहोस्</string>
+    <string name="abc_action_bar_up_description">माथि खोज्नुहोस्</string>
+    <string name="abc_action_menu_overflow_description">थप विकल्पहरू</string>
+    <string name="abc_action_mode_done">सम्पन्न भयो</string>
+    <string name="abc_activity_chooser_view_see_all">सबै हेर्नुहोस्</string>
+    <string name="abc_activitychooserview_choose_application">एउटा अनुप्रयोग छान्नुहोस्</string>
+    <string name="abc_capital_off">निष्क्रिय पार्नुहोस्</string>
+    <string name="abc_capital_on">सक्रिय गर्नुहोस्</string>
+    <string name="abc_menu_alt_shortcut_label">Alt+</string>
+    <string name="abc_menu_ctrl_shortcut_label">Ctrl+</string>
+    <string name="abc_menu_delete_shortcut_label">delete</string>
+    <string name="abc_menu_enter_shortcut_label">enter</string>
+    <string name="abc_menu_function_shortcut_label">Function+</string>
+    <string name="abc_menu_meta_shortcut_label">Meta+</string>
+    <string name="abc_menu_shift_shortcut_label">Shift+</string>
+    <string name="abc_menu_space_shortcut_label">space</string>
+    <string name="abc_menu_sym_shortcut_label">Sym+</string>
+    <string name="abc_prepend_shortcut_label">Menu+</string>
+    <string name="abc_search_hint">खोज्नुहोस्...</string>
+    <string name="abc_searchview_description_clear">प्रश्‍न हटाउनुहोस्</string>
+    <string name="abc_searchview_description_query">जिज्ञासाको खोज गर्नुहोस्</string>
+    <string name="abc_searchview_description_search">खोज्नुहोस्</string>
+    <string name="abc_searchview_description_submit">जिज्ञासा पेस गर्नुहोस्</string>
+    <string name="abc_searchview_description_voice">भ्वाइस खोजी</string>
+    <string name="abc_shareactionprovider_share_with">साझेदारी गर्नुहोस्...</string>
+    <string name="abc_shareactionprovider_share_with_application">%s सँग आदान प्रदान गर्नुहोस्</string>
+    <string name="abc_toolbar_collapse_description">संक्षिप्त पार्नुहोस्</string>
+    <string name="common_google_play_services_unknown_issue">%1$s लाई Google Play services सँग सहकार्य गर्न समस्या भइरहेको छ। कृपया फेरि प्रयास गर्नुहोस्।</string>
+    <string name="expand_button_title">उन्नत</string>
+    <string name="s1">छविलाई सुरक्षित गर्नुहोस्</string>
+    <string name="s2">विज्ञापनलाई तस्बिरको ग्यालरीमा छवि भण्डारण गर्न अनुमति दिने हो?</string>
+    <string name="s3">स्वीकार गर्नुहोस्</string>
+    <string name="s4">अस्वीकार गर्नुहोस्</string>
+    <string name="s5">पात्रोमा कार्यक्रम सिर्जना गर्नुहोस्</string>
+    <string name="s6">विज्ञापनलाई पात्रोमा कार्यक्रम सिर्जना गर्न अनुमति दिने हो?</string>
+    <string name="s7">परीक्षण विज्ञापन</string>
+    <string name="search_menu_title">खोज्नुहोस्</string>
+    <string name="status_bar_notification_info_overflow">९९९+</string>
+    <string name="summary_collapsed_preference_list">%1$s, %2$s</string>
+    <string name="v7_preference_off">निष्क्रिय पार्नुहोस्‌</string>
+    <string name="v7_preference_on">सक्रिय</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="delete_alert_message">
+        <item quantity="other">Bạn có muốn xóa videos?</item>
+        <item quantity="zero">Bạn có muốn xóa video?</item>
+        <item quantity="one">Bạn có muốn xóa video?</item>
+    </plurals>
+    <plurals name="delete_alert_title">
+        <item quantity="other">Xóa videos?</item>
+        <item quantity="zero">Xóa video?</item>
+        <item quantity="one">Xóa video?</item>
+    </plurals>
+    <plurals name="delete_photo_alert_message">
+        <item quantity="other">Bạn có muốn xóa ảnh?</item>
+        <item quantity="zero">Bạn có muốn xóa ảnh?</item>
+        <item quantity="one">Bạn có muốn xóa ảnh?</item>
+    </plurals>
+    <plurals name="delete_photo_alert_title">
+        <item quantity="other">Xóa ảnh?</item>
+        <item quantity="zero">Xóa ảnh?</item>
+        <item quantity="one">Xóa ảnh?</item>
+    </plurals>
+</resources>

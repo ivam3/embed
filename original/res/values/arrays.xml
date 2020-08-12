@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="audioSettingsEntries">
+        <item>None</item>
+        <item>Mic</item>
+    </string-array>
+    <string-array name="audioSettingsValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="bitrateArray">
+        <item>1.0 Mbit (Very low)</item>
+        <item>2.5 Mbit</item>
+        <item>3.5 Mbit (low)</item>
+        <item>4.5 Mbit</item>
+        <item>6.8 Mbit (Good)</item>
+        <item>9.8 Mbit</item>
+        <item>12 Mbit (Excellent)</item>
+        <item>24 Mbit (Warning)</item>
+        <item>48 Mbit (Warning)</item>
+    </string-array>
+    <string-array name="bitratesValue">
+        <item>1048576</item>
+        <item>2621440</item>
+        <item>3670016</item>
+        <item>4718592</item>
+        <item>7130317</item>
+        <item>10276045</item>
+        <item>12582912</item>
+        <item>25165824</item>
+        <item>50331648</item>
+    </string-array>
+    <string-array name="filename">
+        <item>yyyyMMdd_hhmmss</item>
+        <item>ddMMyyyy_hhmmss</item>
+        <item>yyMMdd_hhmmss</item>
+        <item>ddMMyy_hhmmss</item>
+        <item>hhMMss_yyyymmdd</item>
+        <item>hhMMss_ddmmyyyy</item>
+        <item>hhMMss_yymmdd</item>
+        <item>hhMMss_ddmmyy</item>
+    </string-array>
+    <string-array name="fpsArray">
+        <item>25</item>
+        <item>30</item>
+        <item>35</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+    </string-array>
+    <string-array name="language">
+        <item>English</item>
+        <item>Vietnamese</item>
+    </string-array>
+    <string-array name="languageValue">
+        <item>en</item>
+        <item>vi</item>
+    </string-array>
+    <string-array name="orientationEntries">
+        <item>Auto</item>
+        <item>Portrait</item>
+        <item>Landscape</item>
+    </string-array>
+    <string-array name="orientationValues">
+        <item>auto</item>
+        <item>portrait</item>
+        <item>landscape</item>
+    </string-array>
+    <string-array name="resolutionValues">
+        <item>360</item>
+        <item>720</item>
+        <item>1080</item>
+        <item>1440</item>
+    </string-array>
+    <string-array name="resolutionsArray">
+        <item>360P</item>
+        <item>720P</item>
+        <item>1080P</item>
+        <item>1440P</item>
+    </string-array>
+    <string-array name="timer">
+        <item>0</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
+    </string-array>
+    <string-array name="timerArray">
+        <item>None</item>
+        <item>3s</item>
+        <item>5s</item>
+        <item>7s</item>
+        <item>10s</item>
+    </string-array>
+</resources>

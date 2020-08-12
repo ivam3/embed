@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout android:id="@id/shimmer_container" android:background="@drawable/bg_card_ads" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" app:shimmer_auto_start="true" app:shimmer_base_color="#ffcccccc"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout android:background="@color/color_white" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="50.0dip">
+            <ImageView android:background="@color/light_transparent" android:padding="5.0dip" android:layout_width="50.0dip" android:layout_height="50.0dip" android:scaleType="centerCrop" />
+            <LinearLayout android:gravity="center" android:layout_gravity="center" android:orientation="vertical" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_marginLeft="5.0dip" android:layout_marginRight="5.0dip" android:layout_weight="1.0">
+                <TextView android:textSize="15.0sp" android:textColor="@android:color/black" android:ellipsize="end" android:background="@color/light_transparent" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="5.0dip" android:lines="1" />
+                <TextView android:textSize="14.0sp" android:textColor="@android:color/darker_gray" android:ellipsize="end" android:background="@color/light_transparent" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="5.0dip" android:lines="1" />
+            </LinearLayout>
+            <Button android:textSize="12.0sp" android:textStyle="bold" android:textColor="@android:color/white" android:gravity="center" android:layout_gravity="center" android:background="@color/light_transparent" android:paddingLeft="5.0dip" android:paddingRight="5.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="5.0dip" />
+        </LinearLayout>
+        <TextView android:layout_alignParentLeft="true" android:layout_alignParentTop="true" style="@style/AppTheme.Ads" />
+    </RelativeLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/root" android:background="@color/black_alpha_70" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginStart="38.0dip" android:layout_marginEnd="38.0dip">
+        <LinearLayout android:orientation="vertical" android:background="@drawable/usage_guide_top_bg" android:padding="16.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <TextView android:textSize="16.0sp" android:textColor="@color/globalWhite" android:layout_width="wrap_content" android:layout_height="fill_parent" android:text="@string/guide_activity_usage_stats_page_text2" />
+            <TextView android:textSize="12.0sp" android:textColor="@color/globalWhite" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginTop="6.0dip" android:text="@string/applock_permission_guide_reminder" />
+        </LinearLayout>
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:background="@android:color/white" android:layout_width="fill_parent" android:layout_height="55.0dip">
+            <ImageView android:layout_width="44.0dip" android:layout_height="44.0dip" android:src="@drawable/logo" android:layout_marginStart="16.0dip" android:layout_marginEnd="16.0dip" />
+            <TextView android:textSize="18.0sp" android:textColor="#ff444444" android:layout_gravity="center_vertical" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/app_name" android:layout_weight="1.0" />
+            <FrameLayout android:layout_width="100.0dip" android:layout_height="fill_parent">
+                <androidx.appcompat.widget.SwitchCompat android:layout_gravity="center" android:id="@id/na_guide_switch_btn" android:layout_width="50.0dip" android:layout_height="wrap_content" style="@style/swguide" />
+                <ImageView android:layout_gravity="center_vertical" android:id="@id/na_guide_hand_img" android:padding="2.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="15.0dip" android:src="@drawable/pointing_hand" android:layout_marginStart="10.0dip" />
+            </FrameLayout>
+        </LinearLayout>
+        <ImageView android:layout_width="fill_parent" android:layout_height="wrap_content" android:src="@drawable/usage_guide_bg" android:adjustViewBounds="true" />
+        <TextView android:textStyle="bold" android:textColor="#ff1a99ff" android:gravity="center" android:id="@id/na_guide_ok" android:background="@drawable/usage_guide_btn_bg" android:layout_width="fill_parent" android:layout_height="36.0dip" android:layout_marginTop="16.0dip" android:text="OK" />
+    </LinearLayout>
+    <View android:layout_gravity="fill_horizontal" android:layout_width="wrap_content" android:layout_height="1.0dip" />
+</LinearLayout>

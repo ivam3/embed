@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@color/globalWhite" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:id="@id/swipeRefresh" android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <androidx.recyclerview.widget.RecyclerView android:id="@id/videos_rv" android:scrollbars="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <TextView android:gravity="center" android:layout_gravity="center" android:id="@id/message_tv" android:layout_width="fill_parent" android:layout_height="fill_parent" android:text="@string/video_list_no_video_message" />
+    <RelativeLayout android:id="@id/btn_floatbutton" android:background="@drawable/btn_float_button" android:layout_width="50.0dip" android:layout_height="50.0dip" android:layout_margin="20.0dip" android:layout_alignParentRight="true" android:layout_alignParentBottom="true">
+        <ImageView android:id="@id/im_record" android:layout_width="30.0dip" android:layout_height="30.0dip" android:src="@drawable/ic_notification" android:layout_centerInParent="true" />
+        <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/lo_record" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <TextView android:textSize="12.0sp" android:textColor="#ffffffff" android:id="@id/tv_time_record" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00:00" />
+            <ImageView android:layout_width="20.0dip" android:layout_height="20.0dip" android:layout_marginTop="2.0dip" android:src="@drawable/rectangle_while" android:tint="#ffffffff" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
