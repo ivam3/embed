@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ImageView android:id="@id/remove_view_image" android:background="@drawable/remove_view_background" android:padding="16.0dip" android:layout_width="80.0dip" android:layout_height="80.0dip" android:src="@android:drawable/ic_menu_close_clear_cancel" android:contentDescription="@null"
-  xmlns:android="http://schemas.android.com/apk/res/android" />

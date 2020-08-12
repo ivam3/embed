@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:icon="@android:drawable/ic_menu_share" android:id="@id/share" android:title="Share" />
-    <item android:icon="@android:drawable/ic_delete" android:id="@id/delete" android:title="Delete" />
-    <item android:icon="@android:drawable/ic_menu_edit" android:id="@id/edit" android:title="Edit" />
-    <item android:enabled="false" android:id="@id/savegif" android:title="Save as GIF" />
-</menu>

@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView android:textStyle="bold" android:id="@id/sectionID" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="5.0dip" android:layout_marginBottom="5.0dip" android:layout_marginStart="15.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android" />

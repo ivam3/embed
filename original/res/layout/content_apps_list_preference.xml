@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@id/app" android:background="?android:selectableItemBackground" android:focusable="true" android:clickable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="14.0dip" android:paddingEnd="15.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/appIcon" android:layout_width="36.0dip" android:layout_height="36.0dip" android:scaleType="fitXY" android:layout_centerVertical="true" android:contentDescription="App Icon" android:layout_alignParentStart="true" />
-    <ImageView android:id="@id/appChecked" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_check_circle_black_18dp" android:scaleType="fitXY" android:layout_centerVertical="true" android:contentDescription="Selected app check marker" android:layout_alignParentEnd="true" />
-    <TextView android:textAppearance="?android:textAppearanceMedium" android:textColor="?android:textColorAlertDialogListItem" android:ellipsize="end" android:gravity="center_vertical" android:id="@id/appName" android:layout_width="fill_parent" android:layout_height="wrap_content" android:minHeight="?android:listPreferredItemHeight" android:maxLines="1" android:singleLine="true" android:paddingStart="14.0dip" android:paddingEnd="15.0dip" android:layout_toStartOf="@id/appChecked" android:layout_toEndOf="@id/appIcon" />
-</RelativeLayout>
