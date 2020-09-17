@@ -259,7 +259,7 @@ if File.exist?("#{injected_apk}")
   `jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android -digestalg SHA1 -sigalg MD5withRSA $(pwd)/#{injected_apk} androiddebugkey`
   print "[*]─➤ Aligning #{injected_apk} ..\n".cyan
   `zipalign -f -v 4 $(pwd)/#{injected_apk} #{final_apk}`
-#  cleaning_up()
+  cleaning_up()
   if File.exist?("#{final_apk}")
     puts "[+]─➤ Infected file #{final_apk} ready.\n".green
   else
