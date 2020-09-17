@@ -138,7 +138,6 @@ end
 def cleaning_up()
   `rm -rf original 2>&1`
   `rm -rf payload 2>&1`
-  `rm #{injected_apk} 2>&1`
   `rm original.apk 2>&1`
   `rm payload.apk 2>&1`
 end
