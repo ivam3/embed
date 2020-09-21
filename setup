@@ -136,9 +136,14 @@ else
 	printf "$R\n[ERR-java]->$W Going to https://t.me/Ivam3_Bot\n"
 	exit
 fi
+
+if [ ! -d ~/.android ]; then
+	mkdir ~/.android
+fi
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
-curl https://raw.githubusercontent.com/ivam3/java/master/.embed/apk.rb -o $msf/lib/msf/core/payload/apk.rb
-curl https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -o $PREFIX/bin/signapk
+wget https://raw.githubusercontent.com/ivam3/java/master/.embed/apk.rb -O $msf/lib/msf/core/payload/apk.rb -q
+wget https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -O $PREFIX/bin/signapk -q
+wget https://raw.githubusercontent.com/ivam3/embed/master/.IbyC/debug.keystore -O $HOME/.android/debug.keystore
 chmod 711 $PREFIX/bin/signapk
 chmod 711 $msf/lib/msf/core/payload/apk.rb
 
@@ -146,8 +151,8 @@ printf "$Y\n\n[!]$C Installing ruby gems . . .$W\n"
 command -v bundle > /dev/null >2&1 || gem install bundle
 bundle install
 testing
-cd $HOME
-echo ""
+cd
+
 if [ ! -z $testjava ] && [ ! -z $testembed ] && [ ! -z $testapktool ] && [ ! -z $testsignapk ] && [ ! -z $testapksigner ] && [ ! -z $testapkrb ]; then
 	printf "$Y[IbyC]$C Finish !!$W \n \t Now you can hide a metasploit payload in legitim .APK \n \t \t Now try it by executing the command$G => EMBED$W\n\n"
 	printf "$Y[!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3_Bot$W\n\n"
