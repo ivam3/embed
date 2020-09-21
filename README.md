@@ -1,26 +1,30 @@
-# embed
-# 
-# Embed Metasploit Payload in Legtim APK with Termux
-#
-# This script fixed argument "-x" in metasploit framework
-# And contain script to embed origin .Apk named EMBED
-#
-#
-# To install it execute $ bash setup
-# When it finish just run embed, execute $ ruby EMBED.rb
-#
-#Remember , EMBED need Metasploit to get Works.
-#
-# ADAPTED BY HAX4US and updated by IVAM3
-#
-#:::::::  Java for termux  :::::::::::::
-#
-#This software and related documentation are provided under license agreement containing in www.java.com
-#
-# JOIN ME ON >> https://t.me/Ivam3byCinderella
-#
-# HAVE A TROUBLE? COME TO >> https://t.me/Ivam3_Bot
-#
-# Please refer to http://java.com/licensereadme
+# EMBED v.2.0
+This tool creates a payload with metasploit framework and injected into a legitimate APK.
 
-#                       IbyC.
+	DISCLAIMER
+If the law is violated with it's use, this would be the responsibility of the user who handled it..
+Ivam3 is not responsible for the misuse that can be given to everything that this laboratory entails
+
+# REQUIREMENTS.
+- Metasploit
+- Java
+- Keytool
+- Apktool
+- Jarsigner
+- Zipalign
+
+# INSTALLATI0N.
+Give execute permissions to the configuration file setup:
+	$  chmod +x setup
+Now run the setup file:
+	$  bash setup
+This file will install and configure Termux with all the required libraries and dependencies including java for termux.
+
+
+# JAVA FOR TERMUX
+Repository
+	https://github.com/ivam3/java
+This software and related documentation are provided under license agreement containing in www.java.com
+Please refer to http://java.com/licensereadme.
+
+
