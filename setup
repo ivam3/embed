@@ -1,6 +1,6 @@
 #!/system/bin/env bash
 # Coded by Ivam3 on Ago 2018
-set -euo pipefail
+#set -euo pipefail
 IFS=$'\n\t'
 #Var
 	R='\033[1;31m'
@@ -20,59 +20,6 @@ ctrl_c() {
 	echo
 	printf "$Y [!]$R Going me on https://t.me/Ivam3byCinderella$W
 	\n"
-}
-testing() {
-	testjava=$(command -v java)
-	testembed=$(command -v EMBED)
-	testapktool=$(command -v apktool)
-	testsignapk=$(command -v signapk)
-	testapksigner=$(command -v apksigner)
-	testapkrb=$(cat $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb | grep -o "unsign")
-printf "$Y[!]-> Testing installation . . .\n"
-sleep 1
-printf "$W Java         "
-sleep 1
-if [ ! -z $testjava ]; then
-        printf "$G > OK!!\n"
-else
-        printf "$R > ERROR$W\n"
-fi
-printf "$W Apktool      "
-sleep 1
-if [ ! -z $testapktool ]; then
-        printf "$G > OK!!\n"
-else
-        printf "$R > ERROR$W\n"
-fi
-printf "$W Signapk      "
-sleep 1
-if [ ! -z $testsignapk ]; then
-        printf "$G > OK!!\n"
-else
-        printf "$R > ERROR$W\n"
-fi
-printf "$W Apksigner    "
-sleep 1
-if [ ! -z $testapksigner ]; then
-        printf "$G > OK!!\n"
-else
-        printf "$R > ERROR$W\n"
-fi
-printf "$W EMBED                "
-sleep 1
-if [ ! -z $testembed ]; then
-        printf "$G > OK!!\n"
-else
-        printf "$R > ERROR$W\n"
-fi
-printf "$W Arg -x	"
-sleep 1
-if [ ! -z $testapkrb ]; then
-	printf "$G > OK!!\n"
-else
-	printf "$R > ERROR$W\n"
-fi
-sleep 2
 }
 
 if [ -e $PWD/.IbyC/disclaimer ]
@@ -137,30 +84,24 @@ else
 	exit
 fi
 
+printf "$Y\n[!]->$W press$G ENTER$W to continue\n"
+read enter
+
 if [ ! -d ~/.android ]; then
 	mkdir ~/.android
 fi
 mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
 wget https://raw.githubusercontent.com/ivam3/java/master/.embed/apk.rb -O $msf/lib/msf/core/payload/apk.rb -q
 wget https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -O $PREFIX/bin/signapk -q
-wget https://raw.githubusercontent.com/ivam3/embed/master/.IbyC/debug.keystore -O $HOME/.android/debug.keystore
+wget https://raw.githubusercontent.com/ivam3/embed/master/.IbyC/debug.keystore -O $HOME/.android/debug.keystore -q
 chmod 711 $PREFIX/bin/signapk
 chmod 711 $msf/lib/msf/core/payload/apk.rb
 
 printf "$Y\n\n[!]$C Installing ruby gems . . .$W\n"
 command -v bundle > /dev/null >2&1 || gem install bundle
 bundle install
-testing
 cd
 
-if [ ! -z $testjava ] && [ ! -z $testembed ] && [ ! -z $testapktool ] && [ ! -z $testsignapk ] && [ ! -z $testapksigner ] && [ ! -z $testapkrb ]; then
-	printf "$Y[IbyC]$C Finish !!$W \n \t Now you can hide a metasploit payload in legitim .APK \n \t \t Now try it by executing the command$G => EMBED$W\n\n"
-	printf "$Y[!]$W If something was wrong, JOIN me on =>$B https://t.me/Ivam3_Bot$W\n\n"
-else
-	printf "$R"
-	printf "$R[W]$W O-ops!! Something was wrong\n"
-	printf "$Y[!]$W Please take screenshot of the error\nand send it to my bot in telegram \n $Y >>$B https://t.me/Ivam3_Bot$W\n\n"
-fi
 if [ -f $arm ]; then
 	rm -rf $arm
 fi
