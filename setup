@@ -75,7 +75,7 @@ fi
 sleep 2
 }
 
-if [ $PWD/.IbyC/embed ]
+if [ -e $PWD/.IbyC/disclaimer ]
 then
 	bash $PWD/.IbyC/disclaimer
 else

