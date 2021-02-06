@@ -21,6 +21,27 @@ ctrl_c() {
 	printf "$Y [!]$R Going me on https://t.me/Ivam3byCinderella$W
 	\n"
 }
+instamsf() {
+	command -v wget > /dev/null 2>&1 || yes|pkg install wget > /dev/null 2>&1
+	wget https://raw.githubusercontent.com/ivam3/ivam3.github.io/master/master/installer/tools/IbyC-metasploit -O ~/IbyC-metasploit -q
+	chmod +x IbyC-metasploit; bash IbyC-metasploit
+	rm -rf IbyC-metasploit
+}
+instajava() {
+	git clone https://github.com/ivam3/java.git $HOME/java >/dev/null 2>&1
+	if [ -d $HOME/java ]
+	then
+		TMP_DIR=$HOME/java
+		mkdir -p $TMP_DIR/handler
+		mkdir -p $TMP_DIR/unsign
+		mkdir -p $TMP_DIR/finished
+		chmod -R 711 $TMP_DIR
+		bash $TMP_DIR/Ivam3.unstable
+	else
+		printf "$R\n[ERR-java]->$W Going to https://t.me/Ivam3_Bot\n"
+		exit
+	fi
+}
 
 if [ -e $PWD/.IbyC/disclaimer ]
 then
@@ -57,36 +78,48 @@ printf "$Y [!]$C Cleaning up . . .$W
 		sudo chown -R $USR:$USR $HOME/.suroot
 	fi
 
-msf=$(find $PREFIX/opt/ -name "metasploit-framework" -type d)
-	
-	if [ -z $msf ]; then
-		printf "$R[W] metasploit framework it doesn't exist$Y, please install it$W\n"
-		exit
-	else
-		printf "$Y[!]$C Upgrading && Downloading packages . . .$W\n"
-		yes |pkg update && pkg upgrade; pkg install git wget axel tar apksigner aapt
-	fi
+printf "$Y[!]$C Upgrading && Downloading packages . . .$W\n"
+yes|pkg update && pkg upgrade && pkg install git wget axel tar apksigner aapt > /dev/null 2>&1
 
-printf "$Y\n\n[!]$C Creating directories . . .$W\n"
-git clone https://github.com/ivam3/java.git $HOME/java >/dev/null 2>&1
-if [ -d $HOME/java ]
-then
-	TMP_DIR=$HOME/java
-	mkdir -p $TMP_DIR/handler
-	mkdir -p $TMP_DIR/unsign
-	mkdir -p $TMP_DIR/finished
-	printf "$Y\n\n[!]$C Downloading files . . .$W\n"
-	chmod -R 711 $TMP_DIR
-	printf "$Y\n\n[!]$C Downloading binaries . . .$W\n"
-	bash $TMP_DIR/Ivam3.unstable
+#:::: METASPLOIT ::::#
+msf=$(find $PREFIX/opt/ -iname "metasploit-framework" -type d)	
+if [ -d ~/metasploit-framework ] || [ ! -z $msf ]; then
+	printf "$Y[?]->$W Metasploit already exist$Y |$W Do you want re-install it?\n"
+	while read -p "[yes/no]─➤ " yesorno && [ -z $yesorno ]; do
+		continue
+	done
+	if [ $yesorno = "yes" ] || [ $yesorno = "Yes" ] || [ $yesorno = "YES" ]
+	then
+		instamsf
+	else
+		printf "$G\n[+]─➤ Metasploit keeped!!\n\n"
+		sleep 1
+	fi
 else
-	printf "$R\n[ERR-java]->$W Going to https://t.me/Ivam3_Bot\n"
-	exit
+	printf "$G\n[+]─➤ Installing Metasploit. . .\n\n"
+	instamsf
 fi
 
-printf "$Y\n[!]->$W press$G ENTER$W to continue\n"
-read enter
+#:::: JAVA ::::#
+if [ -d ~/java ]
+then
+	printf "$Y[?]->$W JAVA already exist$Y |$W Do you want re-install it?\n"
+	while read -p "[yes/no]─➤ " yesorno && [ -z $yesorno ]; do
+		continue
+	done
+	if [ $yesorno = "yes" ] || [ $yesorno = "Yes" ] || [ $yesorno = "YES" ]
+	then
+		instajava
+	else
+		printf "$G\n[+]─➤ JAVA keeped!!\n\n"
+		sleep 1
+	fi
+else
+	printf "$G\n[+]─➤ Installing JAVA. . .\n\n"
+	instajava
+fi
 
+printf "$Y\n\n[!]$C Downloading files . . .$W\n"
 if [ ! -d ~/.android ]; then
 	mkdir ~/.android
 fi
