@@ -98,7 +98,7 @@ chmod 711 $PREFIX/bin/signapk
 chmod 711 $msf/lib/msf/core/payload/apk.rb
 
 printf "$Y\n\n[!]$C Installing ruby gems . . .$W\n"
-command -v bundle > /dev/null >2&1 || gem install bundle
+command -v bundle > /dev/null 2>&1 || gem install bundle
 bundle install
 cd
 
