@@ -23,9 +23,13 @@ ctrl_c() {
 }
 instamsf() {
 	command -v wget > /dev/null 2>&1 || yes|pkg install wget > /dev/null 2>&1
-	wget https://raw.githubusercontent.com/ivam3/ivam3.github.io/master/master/installer/tools/IbyC-metasploit -O ~/IbyC-metasploit -q
-	chmod +x IbyC-metasploit; bash IbyC-metasploit
-	rm -rf IbyC-metasploit
+	wget https://raw.githubusercontent.com/ivam3/i-Haklab/master/.set/fix-tools/fixmetasploit -O ~/fixmetasploit -q
+	chmod +x ~/fixmetasploit;bash ~/fixmetasploit
+	rm -rf ~/fixmetasploit
+#	wget https://raw.githubusercontent.com/ivam3/ivam3.github.io/master/master/installer/tools/IbyC-metasploit -O ~/IbyC-metasploit -q
+#	chmod +x IbyC-metasploit; bash IbyC-metasploit
+#	rm -rf IbyC-metasploit
+
 }
 instajava() {
 	git clone https://github.com/ivam3/java.git $HOME/java >/dev/null 2>&1
