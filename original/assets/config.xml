@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest package="info.zzcs.game.BomberMan" versionCode="2"
-	versionName="1.1" type="2">
-	<GameType value="2" />
-	<RomName value="BomberMan" />
-	<GameControlType value="2"/>
-	<ApkId value="info.zzcs.game.BomberMan"/>
-	<GameName value="Bomber Man"/>
-</manifest>
