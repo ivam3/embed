@@ -127,7 +127,9 @@ printf "$Y\n\n[!]$C Downloading files . . .$W\n"
 if [ ! -d ~/.android ]; then
 	mkdir ~/.android
 fi
-mv $msf/lib/msf/core/payload/apk.rb $msf/lib/msf/core/payload/apk.rb.O
+if [ ! -d $msf/lib/msf/core/payload ];then
+	mkdir -p $msf/lib/msf/core/payload
+fi
 wget https://raw.githubusercontent.com/ivam3/java/master/.embed/apk.rb -O $msf/lib/msf/core/payload/apk.rb -q
 wget https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -O $PREFIX/bin/signapk -q
 wget https://raw.githubusercontent.com/ivam3/embed/master/.IbyC/debug.keystore -O $HOME/.android/debug.keystore -q
@@ -135,7 +137,13 @@ chmod 711 $PREFIX/bin/signapk
 chmod 711 $msf/lib/msf/core/payload/apk.rb
 
 printf "$Y\n\n[!]$C Installing ruby gems . . .$W\n"
-command -v bundle > /dev/null 2>&1 || gem install bundle
+rubyVer=$(ruby -v | awk -F " " '{print $2}'|awk -F "." '{print $1}')
+command -v ruby > /dev/null 2>&1 || apt install ruby -y > /dev/null 2>&1
+if [ "$rubyVer" != "2" ];then
+	wget -q https://raw.githubusercontent.com/ivam3/i-Haklab/master/.set/bin/IbyC-fixer -o $PREFIX/bin/IbyC-fixer && chmod +x $PREFIX/bin/IbyC-fixer
+	exec $PREFIX/bin/IbyC-fixer downgradeRepo ruby=2.7.2
+fi
+command -v bundle > /dev/null 2>&1 || gem install bundle > /dev/null 2>&1
 bundle install
 cd
 

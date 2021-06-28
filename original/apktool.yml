@@ -1,0 +1,58 @@
+!!brut.androlib.meta.MetaInfo
+apkFileName: original.apk
+compressionType: false
+doNotCompress:
+- arsc
+- zip
+- jar
+- png
+- res/drawable/appinfo_bottombar_bg.9.png
+- res/drawable/gamecenter_title_bar.9.png
+- gif
+- res/drawable/more.9.png
+- res/drawable/more_pressed.9.png
+- res/drawable/play.9.png
+- res/drawable/play_pressed.9.png
+- res/drawable/website.9.png
+- res/drawable/website_pressed.9.png
+- res/drawable-hdpi/gamecenter_title_bar.9.png
+- jpg
+isFrameworkApk: false
+packageInfo: null
+sdkInfo: null
+sharedLibrary: false
+sparseResources: false
+unknownFiles:
+  t: '8'
+  tags: '8'
+  src.copy: '8'
+  info/info.copy: '8'
+  info/zzcs/zzcs.copy: '8'
+  info/zzcs/ads/ads.copy: '8'
+  info/zzcs/happybay/happybay.copy: '8'
+  info/zzcs/happybay/engine/engine.copy: '8'
+  info/zzcs/appcenter/appcenter.copy: '8'
+  info/zzcs/appcenter/utils/utils.copy: '8'
+  info/zzcs/appcenter/webservices/webservices.copy: '8'
+  info/zzcs/appcenter/webservices/comments/comments.copy: '8'
+  info/zzcs/appcenter/webservices/exceptions/exceptions.copy: '8'
+  info/zzcs/appcenter/webservices/taste/taste.copy: '8'
+  info/zzcs/appcenter/multiversion/multiversion.copy: '8'
+  info/zzcs/appcenter/annotations/annotations.copy: '8'
+  info/zzcs/settings/settings.copy: '8'
+  info/zzcs/engineinterface/engineinterface.copy: '8'
+  com/com.copy: '8'
+  com/eabmobile/eabmobile.copy: '8'
+  com/eabmobile/flashinputs/flashinputs.copy: '8'
+  com/eabmobile/flash/flash.copy: '8'
+  com/eabmobile/flash/util/util.copy: '8'
+  com/freezgame/tools/assets/defaultad/NetworkUnavailable.jpg: '8'
+  com/freezgame/tools/assets/defaultad/NoNetwork.jpg: '8'
+  com/freezgame/tools/assets/defaultad/banner1.png: '8'
+  com/freezgame/tools/assets/defaultad/banner2.png: '8'
+  com/freezgame/tools/assets/defaultad/rect1.png: '8'
+  com/freezgame/tools/assets/hdpi/frame.9.png: '8'
+  com/freezgame/tools/assets/mdpi/frame.9.png: '8'
+usesFramework: null
+version: 2.3.4
+versionInfo: null
