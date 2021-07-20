@@ -32,15 +32,11 @@ instamsf() {
 
 }
 instajava() {
-	git clone https://github.com/ivam3/java.git $HOME/java >/dev/null 2>&1
-	if [ -d $HOME/java ]
-	then
-		TMP_DIR=$HOME/java
-		mkdir -p $TMP_DIR/handler
-		mkdir -p $TMP_DIR/unsign
-		mkdir -p $TMP_DIR/finished
-		chmod -R 711 $TMP_DIR
-		bash $TMP_DIR/Ivam3.unstable
+	git clone https://github.com/ivam3/java.git $PREFIX/share/java >/dev/null 2>&1
+	if [ -d $PREFIX/share/java ]; then
+		cd $PREFIX/share/java
+		chmod -R 711 $TMP_DIR/setup
+		bash $TMP_DIR/setup java8
 	else
 		printf "$R\n[ERR-java]->$W Going to https://t.me/Ivam3_Bot\n"
 		exit
