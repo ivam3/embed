@@ -2,151 +2,78 @@
 # Coded by Ivam3 on Ago 2018
 #set -euo pipefail
 IFS=$'\n\t'
-#Var
-	R='\033[1;31m'
-        G='\033[1;32m'
-        Y='\033[1;33m'
-        B='\033[1;34m'
-        M='\033[1;35m'
-        C='\033[1;36m'
-        W='\033[0m'
-	arm=$(find $PREFIX/share/ -name "jdk8_arm.tar.gz" -type f)
-	aarch=$(find $PREFIX/share/ -name "jdk8_aarch64.tar.gz" -type f)
-	EMBED=$HOME/embed
-	USR=$(whoami)
-
 trap ctrl_c 2
-ctrl_c() {
-	echo
-	printf "$Y [!]$R Going me on https://t.me/Ivam3byCinderella$W
-	\n"
-}
-instamsf() {
-	command -v wget > /dev/null 2>&1 || yes|pkg install wget > /dev/null 2>&1
-	wget https://raw.githubusercontent.com/ivam3/i-Haklab/master/.set/fix-tools/fixmetasploit -O ~/fixmetasploit -q
-	chmod +x ~/fixmetasploit;bash ~/fixmetasploit
-	rm -rf ~/fixmetasploit
-#	wget https://raw.githubusercontent.com/ivam3/ivam3.github.io/master/master/installer/tools/IbyC-metasploit -O ~/IbyC-metasploit -q
-#	chmod +x IbyC-metasploit; bash IbyC-metasploit
-#	rm -rf IbyC-metasploit
-
-}
+ctrl_c(){ printf "$Y\n\n   [¿] Need a help [?]$B\nTelegram : t.me/Ivam3_Bot$W\n\n";exit;}
+GIT="https://raw.githubusercontent.com/ivam3"
+R='\033[1;31m'
+G='\033[1;32m'
+Y='\033[1;33m'
+B='\033[1;34m'
+M='\033[1;35m'
+C='\033[1;36m'
+W='\033[0m'
+command -v curl >/dev/null || yes|apt install curl >/dev/null 2>&1
+curl -LS https://raw.githubusercontent.com/ivam3/i-Haklab/master/.set/libexec/banner/IbyC|bash
 instajava() {
+	printf "$G(_>)─➤$W Installing JAVA_[it could take a while]\n"
 	git clone https://github.com/ivam3/java.git $PREFIX/share/java >/dev/null 2>&1
 	if [ -d $PREFIX/share/java ]; then
 		cd $PREFIX/share/java
-		chmod -R 711 $TMP_DIR/setup
-		bash $TMP_DIR/setup java8
+		chmod -R 711 $PREFIX/share/java
+		bash $PREFIX/share/java/setup java8
+		rm -rf $PREFIX/share/java
 	else
-		printf "$R\n[ERR-java]->$W Going to https://t.me/Ivam3_Bot\n"
-		exit
+		printf "$R(_>)_ERR─➤$W java donwload fail.\n"
+		ctrl_c
 	fi
 }
+#:::: MSF ::::#
+! command -v msfconsole || { echo >&2 "$R\n(_>)─➤$W Metasploit isn't in PATH. Install it. Aborting."; exit 1; }
 
-if [ -e $PWD/.IbyC/disclaimer ]
-then
-	bash $PWD/.IbyC/disclaimer
-else
-	printf "$R\n[ERR-banner]-> Going to https://t.me/Ivam3_Bot$W\n"
-	exit
-fi
+printf "$G(_>)─➤$W Upgrading Termux.\n"
+yes|pkg update && pkg upgrade
+for repo in git wget curl axel tar aapt;do
+	command -v $repo >/dev/null || yes|apt install $repo >/dev/null 2>&1
+done
 
-printf "$Y [!]$C Cleaning up . . .$W
-\n"
-	if [ -e $HOME/installEMBED ]; then
-		rm $HOME/installEMBED
-	fi
-	if [ -d $HOME/java ]; then
-		rm -rf $HOME/java
-	fi
-	if [ -L $PREFIX/bin/signapk ]; then
-                rm $PREFIX/bin/signapk
-        fi
-        if [ -L $PREFIX/bin/zzipalign ]; then
-                rm $PREFIX/bin/zzipalign
-        fi
-	if [ -L $PREFIX/bin/apktool ]; then
-                rm $PREFIX/bin/apktool
-        fi
-	if [ -L $PREFIX/bin/java ] || [ -e $PREFIX/bin/java ]; then
-                rm $PREFIX/bin/java
-        fi
-	if [ -L $PREFIX/bin/EMBED ] || [ -e $PREFIX/bin/EMBED ]; then
-                rm $PREFIX/bin/EMBED
-        fi
-	if [ -e $PREFIX/bin/sudo ] || [ -d $HOME/.suroot ]; then
-		sudo chown -R $USR:$USR $HOME/.suroot
-	fi
-
-printf "$Y[!]$C Upgrading && Downloading packages . . .$W\n"
-yes|pkg update && pkg upgrade && pkg install git wget axel tar apksigner aapt > /dev/null 2>&1
-
-#:::: METASPLOIT ::::#
-msf=$(find $PREFIX/opt/ -iname "metasploit-framework" -type d)	
-if [ -d ~/metasploit-framework ] || [ ! -z $msf ]; then
-	printf "$Y[?]->$W Metasploit already exist$Y |$W Do you want re-install it?\n"
-	while read -p "[yes/no]─➤ " yesorno && [ -z $yesorno ]; do
-		continue
-	done
-	if [ $yesorno = "yes" ] || [ $yesorno = "Yes" ] || [ $yesorno = "YES" ]
-	then
-		instamsf
-	else
-		printf "$G\n[+]─➤ Metasploit keeped!!\n\n"
-		sleep 1
-	fi
-else
-	printf "$G\n[+]─➤ Installing Metasploit. . .\n\n"
-	instamsf
-fi
-
-#:::: JAVA ::::#
-if [ -d ~/java ]
-then
-	printf "$Y[?]->$W JAVA already exist$Y |$W Do you want re-install it?\n"
-	while read -p "[yes/no]─➤ " yesorno && [ -z $yesorno ]; do
-		continue
-	done
-	if [ $yesorno = "yes" ] || [ $yesorno = "Yes" ] || [ $yesorno = "YES" ]
-	then
-		instajava
-	else
-		printf "$G\n[+]─➤ JAVA keeped!!\n\n"
-		sleep 1
-	fi
-else
-	printf "$G\n[+]─➤ Installing JAVA. . .\n\n"
-	instajava
-fi
-
-printf "$Y\n\n[!]$C Downloading files . . .$W\n"
+#:::: fixArgX ::::#
+printf "$Y\n(_>)─➤$W Fixing argument '-x' in metasploit.$W\n"
 if [ ! -d ~/.android ]; then
 	mkdir ~/.android
 fi
-if [ ! -d $msf/lib/msf/core/payload ];then
-	mkdir -p $msf/lib/msf/core/payload
+if [ ! -d $PREFIX/opt/metasploit-framework/lib/msf/core/payload ];then
+	mkdir -p $PREFIX/opt/metasploit-framework/lib/msf/core/payload
 fi
-wget https://raw.githubusercontent.com/ivam3/java/master/.embed/apk.rb -O $msf/lib/msf/core/payload/apk.rb -q
-wget https://raw.githubusercontent.com/ivam3/java/master/.embed/signapk -O $PREFIX/bin/signapk -q
-wget https://raw.githubusercontent.com/ivam3/embed/master/.IbyC/debug.keystore -O $HOME/.android/debug.keystore -q
-chmod 711 $PREFIX/bin/signapk
-chmod 711 $msf/lib/msf/core/payload/apk.rb
 
-printf "$Y\n\n[!]$C Installing ruby gems . . .$W\n"
+printf "$Y\n(_>)─➤$W Downloading an android keystore.$W\n"
+wget -q $GIT/java/master/.embed/apk.rb -O $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb
+wget -q $GIT/embed/master/.IbyC/debug.keystore -O ~/.android/debug.keystore -q
+
+printf "$Y\n(_>)─➤$W Installing ruby gems."
 rubyVer=$(ruby -v | awk -F " " '{print $2}'|awk -F "." '{print $1}')
 command -v ruby > /dev/null 2>&1 || apt install ruby -y > /dev/null 2>&1
 if [ "$rubyVer" != "2" ];then
-	wget -q https://raw.githubusercontent.com/ivam3/i-Haklab/master/.set/bin/IbyC-fixer -o $PREFIX/bin/IbyC-fixer && chmod +x $PREFIX/bin/IbyC-fixer
+	wget -q https://raw.githubusercontent.com/ivam3/i-Haklab/master/.set/bin/IbyC-fixer -O $PREFIX/bin/IbyC-fixer;chmod +x $PREFIX/bin/IbyC-fixer
 	exec $PREFIX/bin/IbyC-fixer downgradeRepo ruby=2.7.2
 fi
-command -v bundle > /dev/null 2>&1 || gem install bundle > /dev/null 2>&1
+command -v bundle > /dev/null || gem install bundle > /dev/null 2>&1
 bundle install
-cd
 
-if [ -f $arm ]; then
-	rm -rf $arm
+#:::: JAVA ::::#
+if ! command -v java
+then
+	printf "$Y(_>)─➤$W JAVA already exist$Y |$W Do you want re-install it?\n"
+	while read -p "(yes/no)─➤ " yesorno && [ -z $yesorno ]; do
+		continue
+	done
+	if [ $yesorno = "yes" ] || [ $yesorno = "Yes" ] || [ $yesorno = "YES" ];then
+		instajava
+	else
+		printf "$G\n(_>)─➤$W JAVA keeped!!"
+		sleep 1
+	fi
+else
+	instajava
 fi
-if [ -f $aarch ]; then
-	rm -rf $aarch
-fi
-#						@IbyC.
+printf "$Y\n(_>)-> ::::::::::::::: DONE !! :::::::::::::::: <-(<_)$G\n\tTo fix issues going to$B t.me/Ivam3_Bot$W\n"
+#						@Ivam3.
