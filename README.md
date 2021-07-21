@@ -11,9 +11,15 @@ Ivam3 is not responsible for the misuse that can be given to everything that thi
 - Keytool
 - Apktool
 - Jarsigner
-- Zipalign
+- Apksigner
+- Aapt
 
 # INSTALLATION.
+Clone this repositorie:
+
+        $  apt install git -y
+	$  git clone https://github.com/ivam3/embed.git
+
 Give execute permissions to the configuration file setup:
 
 	$  chmod +x setup
@@ -24,19 +30,10 @@ Now run the setup file:
 
 This file will install and configure Termux with all the required libraries and dependencies including java for termux.
 
-
-# JAVA FOR TERMUX
+# JAVA FOR TERMUX.
+For more information about java join to:
 
 	https://github.com/ivam3/java
-
-java needs administrator permissions for its execution, to which you must raise your permissions either using the sudo command :
-
-	$ sudo java
-
-or with a fake root:
-
-	$ proot -0 -w ~ $SHELL
-	$ java
 
 This software and related documentation are provided under license agreement containing in www.java.com. Please refer to http://java.com/licensereadme.
 
