@@ -17,7 +17,7 @@ Ivam3 is not responsible for the misuse that can be given to everything that thi
 # INSTALLATION.
 Clone this repositorie:
 
-        $  apt install git -y
+	$  apt install git -y
 	$  git clone https://github.com/ivam3/embed.git
 
 Give execute permissions to the configuration file setup:
