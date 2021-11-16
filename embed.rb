@@ -149,19 +149,19 @@ unless(apkfile && File.readable?(apkfile))
   exit(1)
 end
 
-jarsigner = `which jarsigner`
+jarsigner = `command -v jarsigner`
 unless(jarsigner && jarsigner.length > 0)
   puts "[ERR-jarsigner]─➤ Going to https://t.me/Ivam3_Bot".red
 	exit(1)
 end
 
-apktool = `which apktool`
+apktool = `command -v apktool`
 unless(apktool && apktool.length > 0)
   puts "[ERR-apktool]─➤ Going to https://t.me/Ivam3_Bot".red
 	exit(1)
 end
 
-zipalign = `which zipalign`
+zipalign = `command -v zipalign`
 unless(zipalign && zipalign.length > 0)
   puts "[ERR-zipalign]─➤ Going to https://t.me/Ivam3_Bot".red
   exit(1)
