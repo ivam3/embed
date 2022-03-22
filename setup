@@ -31,7 +31,7 @@ instajava() {
 }
 
 #:::: MSF ::::#
-! command -v msfconsole || { printf >&2 "$R\n(_>)─➤$W Metasploit isn't in PATH. Install it. Aborting."; exit 1; }
+command -v msfconsole || { printf >&2 "$R\n(_>)─➤$W Metasploit isn't in PATH. Install it. Aborting."; exit 1; }
 
 printf "$G(_>)─➤$W Upgrading Termux.\n"
 yes|pkg update && pkg upgrade
