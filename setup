@@ -34,7 +34,7 @@ instajava() {
 command -v msfconsole >/dev/null || { printf >&2 "$R\n(_>)─➤$W Metasploit isn't in PATH. Install it. Aborting."; exit 1; }
 
 printf "$G(_>)─➤$W Upgrading Termux.\n"
-yes|pkg update && pkg upgrade
+apt update && yes|apt upgrade
 printf "$G(_>)─➤$W Installing dependencies.\n"
 for repo in git wget curl axel tar aapt apksigner openjdk-17;do
 	command -v $repo >/dev/null || yes|apt install $repo >/dev/null 2>/dev/null
