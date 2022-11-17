@@ -5,7 +5,7 @@ IFS=$'\n\t'
 trap ctrl_c 2
 ctrl_c(){ printf "$Y\n\n   [¿] Need a help [?]$B\nTelegram : t.me/Ivam3_Bot$W\n\n";exit;}
 GIT="https://raw.githubusercontent.com/ivam3"
-apktoolV="2.6.0"
+apktoolV="2.6.1"
 apktool_releases="https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_$apktoolV.jar"
 R='\033[1;31m'
 G='\033[1;32m'
@@ -14,9 +14,13 @@ B='\033[1;34m'
 M='\033[1;35m'
 C='\033[1;36m'
 W='\033[0m'
-command -v curl >/dev/null || yes|apt install curl >/dev/null 2>&1
-curl -LS https://raw.githubusercontent.com/ivam3/i-Haklab/master/.set/libexec/banner/IbyC|bash
-instajava() {
+
+usage(){ printf """$Y[usage]:$W ./setup <manual/apt/>$Y
+   ╰[manual]─➤$W automate installation with this script command by command$Y
+   ╰[apt(recommend)]─➤$W Installation over advance package tool(apt)""";exit 0
+}
+
+instajava8() {
 	printf "$G(_>)─➤$W Installing JAVA_[it could take a while]\n"
 	git clone --quiet https://github.com/ivam3/java.git $PREFIX/share/java >/dev/null 2>&1
 	if [ -d $PREFIX/share/java ]; then
@@ -30,58 +34,69 @@ instajava() {
 	fi
 }
 
-#:::: MSF ::::#
-command -v msfconsole >/dev/null || { printf >&2 "$R\n(_>)─➤$W Metasploit isn't in PATH. Install it. Aborting."; exit 1; }
-
-printf "$G(_>)─➤$W Upgrading Termux.\n"
-apt update && yes|apt upgrade
-printf "$G(_>)─➤$W Installing dependencies.\n"
-for repo in git wget curl axel tar aapt apksigner openjdk-17;do
-	command -v $repo >/dev/null || yes|apt install $repo >/dev/null 2>/dev/null
-done
-[[ -d $PREFIX/var/spool ]] || mkdir -p $PREFIX/var/spool
-wget -q $apktool_releases -O $PREFIX/var/spool/apktool.jar
-cat <<- CONF > $PREFIX/bin/apktool
+instaAPKtool(){
+  [[ -d $PREFIX/var/spool ]] || mkdir -p $PREFIX/var/spool
+  wget --tries=20 --progress=dot $apktool_releases -O $PREFIX/var/spool/apktool.jar
+  cat <<- CONF > $PREFIX/bin/apktool
 #!/usr/bin/bash
 exec \$PREFIX/bin/java -jar \$PREFIX/var/spool/apktool.jar  "\$@"
 CONF
-chmod 751 $PREFIX/bin/apktool
+  chmod 751 $PREFIX/bin/apktool
+}
 
-#:::: fixArgX ::::#
-printf "$Y\n(_>)─➤$W Fixing argument '-x' in metasploit.$W\n"
-[[ -d ~/.android ]] || mkdir ~/.android
-[[ -d $PREFIX/opt/metasploit-framework/lib/msf/core/payload ]] || mkdir -p $PREFIX/opt/metasploit-framework/lib/msf/core/payload
+aptKey(){
+  mkdir -p $PREFIX/etc/apt/sources.list.d
+  wget --tries=20 --progress=dot $GIT/termux-packages/gh-pages/ivam3-termux-packages.list \
+    -O $PREFIX/etc/apt/sources.list.d/ivam3-termux-packages.list
+  apt update && yes|apt upgrade
+}
 
-printf "$Y\n(_>)─➤$W Downloading an android keystore.$W\n"
-wget -q $GIT/java/master/.embed/apk.rb -O $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb
-wget -q $GIT/embed/master/.IbyC/debug.keystore -O ~/.android/debug.keystore -q
+manually(){
+  printf "$G(_>)─➤$W Upgrading and installing dependecies.\n"
+  apt update && yes|apt upgrade
+  yes|apt install ruby git wget axel tar aapt apksigner openjdk-17
+  instaAPKtool
 
-printf "$Y\n(_>)─➤$W Installing ruby gems."
-rubyVer=$(ruby -v|awk -F " " '{print $2}'|awk -F "." '{print $1}')
-command -v ruby > /dev/null 2>&1 || apt install ruby -y > /dev/null 2>&1
-if [ "$rubyVer" != "2" ];then
-	wget -q https://raw.githubusercontent.com/ivam3/i-Haklab/master/.set/bin/IbyC-fixer -O $PREFIX/bin/IbyC-fixer;chmod +x $PREFIX/bin/IbyC-fixer
-	exec $PREFIX/bin/IbyC-fixer downgradeRepo ruby=2.7.2
-fi
-command -v bundle > /dev/null || gem install bundle > /dev/null 2>&1
-bundle install
+  command -v msfconsole >/dev/null || {
+    printf "$R\n(_>)─➤$W Metasploit-framework is not in PATH\n ╰────|Do you wanna install it [y/n] ?\n"
+    while read -p " ╰[y/n]─➤ " answ && [ -z $answ ]; do
+      continue
+    done
+    [[ $answ = 'y' ]] || [[ $answ = 'Y' ]] && {
+      aptKey
+      yes|apt install metasploit-framework
+    } || {
+      printf >&2 "$R(_>)─➤$W Metasploit is needed, please install it... Aborting."
+      exit 1
+    }
+  }
 
-#:::: JAVA ::::#
-java=$(apt search openjdk-17 2>/dev/null|grep -oE openjdk)
-if ! -z $java #! command -v java
-then
-	printf "$Y(_>)─➤$W JAVA already exist$Y |$W Do you want re-install it?\n"
-	while read -p "(yes/no)─➤ " yesorno && [ -z $yesorno ]; do
-		continue
-	done
-	if [ $yesorno = "yes" ] || [ $yesorno = "Yes" ] || [ $yesorno = "YES" ];then
-		yes|apt reinstall openjdk-17 -y #instajava
-	else
-		printf "$G\n(_>)─➤$W JAVA keeped!!"
-		sleep 1
-	fi
-else
-	pkg install openjdk-17 -y #instajava
-fi
+  printf "$Y(_>)─➤$W Fixing argument '-x' in metasploit.\n"
+  wget --tries=20 --quiet $GIT/java/master/.embed/apk.rb \
+    -O $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb
+
+  printf "$Y(_>)─➤$W Downloading an android keystore.$W\n"
+  [[ -d ~/.android ]] || mkdir ~/.android
+  [[ -d $PREFIX/opt/metasploit-framework/lib/msf/core/payload ]] || mkdir -p $PREFIX/opt/metasploit-framework/lib/msf/core/payload
+  wget --tries=20 --quiet $GIT/java/master/.embed/apk.rb \
+    -O $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb
+  wget --tries=20 --quiet $GIT/embed/master/.IbyC/debug.keystore \
+    -O ~/.android/debug.keystore
+
+  printf "$Y(_>)─➤$W Installing ruby gems.\n"
+  gem install bundle
+  bundle update --bundler
+  bundle install -j$(nproc --all) --verbose
+}
+
+[[ $# -eq '0' ]] && { usage;}
+case $1 in
+  manual) manually;;
+  apt) aptKey;yes|apt install metasploit-framework embed;;
+  apktool) instaAPKtool;;
+  java8) instajava8;;
+  *) usage;;
+esac
+
 printf "$Y\n(_>)-> ::::::::::::::: DONE !! :::::::::::::::: <-(<_)$G\n\tTo fix issues going to$B t.me/Ivam3_Bot$W\n"
 #						@Ivam3.

