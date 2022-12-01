@@ -211,8 +211,7 @@ if answ<=3 and answ>0
     FileUtils.cp("userkey.jks","key.jks")
   else
     passwd = "android"
-    `cp .IbyC/key.jks .`
-#    system("wget --tries=20 --quiet https://raw.githubusercontent.com/ivam3/embed/master/.IbyC/key.jks -O $(pwd)/key.jks")
+    system("wget --tries=20 --quiet https://raw.githubusercontent.com/ivam3/embed/master/.IbyC/key.jks -O $(pwd)/key.jks")
   end
 else
   puts " ╰[ERR-bad_answer]─➤ Aborting.".red
