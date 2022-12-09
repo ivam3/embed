@@ -330,12 +330,12 @@ print_status("Signing payload..")
 payload_signed = run_cmd(['apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", "#{cwd}/payload.apk"])
 run_cmd(["cp", apkfile, "#{cwd}/original.apk"])
 print_status("Decompiling orignal APK..")
-run_cmd(["apktool", "d", "-r", "-f", "-o", "#{cwd}/original", "#{cwd}/original.apk"])
-print_status("Ignoring the resource decompilation..")
-run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", "#{cwd}/original.apk"])
-FileUtils.rm_rf('original/AndroidManifest.xml')
-FileUtils.cp Dir.glob('original_tmp/AndroidManifest.xml'), 'original/'
-FileUtils.rm_rf('original_tmp')
+run_cmd(["apktool", "d", "-f", "-r", "--force-manifest", "-o", "#{cwd}/original", "#{cwd}/original.apk"])
+#print_status("Ignoring the resource decompilation..")
+#run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", "#{cwd}/original.apk"])
+#FileUtils.rm_rf('original/AndroidManifest.xml')
+#FileUtils.cp Dir.glob('original_tmp/AndroidManifest.xml'), 'original/'
+#FileUtils.rm_rf('original_tmp')
 print_status("Decompiling payload APK..")
 run_cmd(['apktool', 'd', '-f', '-o', "#{cwd}/payload", "#{cwd}/payload.apk"])
 

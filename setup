@@ -35,11 +35,25 @@ instajava8() {
 }
 
 instaAPKtool(){
-  [[ -d $PREFIX/var/spool ]] || mkdir -p $PREFIX/var/spool
+  [[ -d ${PREFIX}/var/spool ]] || mkdir -p ${PREFIX}/var/spool
   wget --tries=20 --progress=dot $apktool_releases -O $PREFIX/var/spool/apktool.jar
   cat <<- CONF > $PREFIX/bin/apktool
 #!/usr/bin/bash
-exec \$PREFIX/bin/java -jar \$PREFIX/var/spool/apktool.jar  "\$@"
+#COLORS
+W="\e[0m"
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+B="\e[34m"
+dirPATH="${PREFIX}/var/spool/"
+
+if [[ -e \$dirPATH/\$(basename \$0).jar ]]
+then
+  exec \$(command -v java) -jar \$dirPATH/\$(basename \$0).jar \${@:1}
+else
+  echo -en \$R"E:\$W \$(basename \$0) PATH missing ...\$Y Aborting.\$W"
+  exit 1
+fi
 CONF
   chmod 751 $PREFIX/bin/apktool
 }
