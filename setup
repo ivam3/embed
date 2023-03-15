@@ -6,7 +6,7 @@ trap ctrl_c 2
 ctrl_c(){ printf "$Y\n\n   [¿] Need a help [?]$B\nTelegram : t.me/Ivam3_Bot$W\n\n";exit;}
 GIT="https://raw.githubusercontent.com/ivam3"
 apktoolV="2.7.0"
-apktool_releases="https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_$apktoolV.jar"
+apktool_releases="https://github.com/iBotPeaches/Apktool/releases/download/v$apktoolV/apktool_$apktoolV.jar"
 R='\033[1;31m'
 G='\033[1;32m'
 Y='\033[1;33m'
