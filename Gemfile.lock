@@ -102,7 +102,7 @@ GEM
     rake (13.0.6)
     redcarpet (3.5.1)
     regexp_parser (2.1.1)
-    rexml (3.2.5)
+    rexml (3.3.9)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
