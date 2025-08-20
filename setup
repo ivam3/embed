@@ -16,8 +16,12 @@ C='\033[1;36m'
 W='\033[0m'
 
 usage(){ printf """$Y[usage]:$W ./setup <manual/apt/>$Y
-   ╰[manual]─➤$W automate installation with this script command by command$Y
-   ╰[apt(recommend)]─➤$W Installation over advance package tool(apt)""";exit 0
+   ╰[apt(recommend)]─➤$W Installation over advance package tool(apt)
+   ╰[apktool]─➤$W Install a diferent version of apktool$Y
+   ╰[java8]─➤$W deprecate openjdk at version 8$Y
+   ╰[keystore]─➤$W Download andoird keystore into ~/.android PATH$Y
+   ╰[install]─➤$W Install all dependecies$Y
+   """;exit 0
 }
 
 instajava8() {
@@ -60,15 +64,28 @@ CONF
 
 aptKey(){
   mkdir -p $PREFIX/etc/apt/sources.list.d
-  wget --tries=20 --progress=dot $GIT/termux-packages/gh-pages/ivam3-termux-packages.list \
-    -O $PREFIX/etc/apt/sources.list.d/ivam3-termux-packages.list
+  yes|apt install wget gnupg 
+  curl -s https://raw.githubusercontent.com/ivam3/termux-packages/gh-pages/ivam3-termux-packages.list \
+    -o ${PREFIX}/etc/apt/sources.list.d/ivam3-termux-packages.list 
+  curl -fsSL "https://raw.githubusercontent.com/ivam3/termux-packages/gh-pages/dists/stable/public_key.gpg" \
+    |gpg --dearmor|tee "$PREFIX/etc/apt/trusted.gpg.d/ivam3.gpg" >/dev/null
   apt update && yes|apt upgrade
 }
 
-manually(){
+androidKeystore(){
+  printf "$Y(_>)─➤$W Downloading an android keystore.$W\n"
+  [[ -d ~/.android ]] || mkdir ~/.android
+  [[ -d $PREFIX/opt/metasploit-framework/lib/msf/core/payload ]] || mkdir -p $PREFIX/opt/metasploit-framework/lib/msf/core/payload
+  wget --tries=20 --quiet $GIT/java/master/.embed/apk.rb \
+    -O $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb
+  wget --tries=20 --quiet $GIT/embed/master/.IbyC/debug.keystore \
+    -O ~/.android/debug.keystore
+}
+
+install(){
   printf "$G(_>)─➤$W Upgrading and installing dependecies.\n"
   apt update && yes|apt upgrade
-  yes|apt install ruby git wget axel tar aapt apksigner openjdk-17
+  yes|apt install ruby git wget axel tar aapt apksigner openjdk-21
   instaAPKtool
 
   command -v msfconsole >/dev/null || {
@@ -85,27 +102,19 @@ manually(){
     }
   }
 
-  printf "$Y(_>)─➤$W Fixing argument '-x' in metasploit.\n"
-  wget --tries=20 --quiet $GIT/java/master/.embed/apk.rb \
-    -O $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb
-
-  printf "$Y(_>)─➤$W Downloading an android keystore.$W\n"
-  [[ -d ~/.android ]] || mkdir ~/.android
-  [[ -d $PREFIX/opt/metasploit-framework/lib/msf/core/payload ]] || mkdir -p $PREFIX/opt/metasploit-framework/lib/msf/core/payload
-  wget --tries=20 --quiet $GIT/java/master/.embed/apk.rb \
-    -O $PREFIX/opt/metasploit-framework/lib/msf/core/payload/apk.rb
-  wget --tries=20 --quiet $GIT/embed/master/.IbyC/debug.keystore \
-    -O ~/.android/debug.keystore
+  androidKeystore
 
   printf "$Y(_>)─➤$W Installing ruby gems.\n"
   gem install bundle
   bundle update --bundler
   bundle install -j$(nproc --all) --verbose
+
 }
 
 [[ $# -eq '0' ]] && { usage;}
 case $1 in
-  manual) manually;;
+  install) install;;
+  keystore) androidKeystore;;
   apt) aptKey;yes|apt install metasploit-framework embed;;
   apktool) instaAPKtool;;
   java8) instajava8;;

