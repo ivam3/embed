@@ -15,12 +15,12 @@ M='\033[1;35m'
 C='\033[1;36m'
 W='\033[0m'
 
-usage(){ printf """$Y[usage]:$W ./setup <manual/apt/>$Y
+usage(){ printf """$Y[usage]:$W ./setup <option>$Y
    ╰[apt(recommend)]─➤$W Installation over advance package tool(apt)
    ╰[apktool]─➤$W Install a diferent version of apktool$Y
    ╰[java8]─➤$W deprecate openjdk at version 8$Y
    ╰[keystore]─➤$W Download andoird keystore into ~/.android PATH$Y
-   ╰[install]─➤$W Install all dependecies$Y
+   ╰[install]─➤$W Install manually all dependecies$Y
    """;exit 0
 }
 
@@ -87,20 +87,35 @@ install(){
   apt update && yes|apt upgrade
   yes|apt install ruby git wget axel tar aapt apksigner openjdk-21
   instaAPKtool
+  
+  for i in metasploit-framework xml2axml; do 
+      case $i in
+          metasploit-framework) 
+              cmd="msfconsole"
+              pkg=$i
+              ;;
+            xml2axml) 
+              cmd=pkg=$i
+              ;;
+      esac
 
-  command -v msfconsole >/dev/null || {
-    printf "$R\n(_>)─➤$W Metasploit-framework is not in PATH\n ╰────|Do you wanna install it [y/n] ?\n"
-    while read -p " ╰[y/n]─➤ " answ && [ -z $answ ]; do
-      continue
-    done
-    [[ $answ = 'y' ]] || [[ $answ = 'Y' ]] && {
-      aptKey
-      yes|apt install metasploit-framework
-    } || {
-      printf >&2 "$R(_>)─➤$W Metasploit is needed, please install it... Aborting."
-      exit 1
+      command -v $cmd >/dev/null || {
+        printf "$R\n(_>)─➤$W $pkg is not in PATH\n ╰────|Do you wanna install it [y/n] ?\n"
+
+        while read -p " ╰[y/n]─➤ " answ && [ -z $answ ]; do
+            continue
+        done
+        
+        [[ $answ = 'y' ]] || [[ $answ = 'Y' ]] && { 
+            aptKey
+            yes|apt install $pkg
+        } || { 
+            printf >&2 "$R(_>)─➤$W $pkg is needed, please install it... Aborting." 
+            exit 1
+        }
     }
-  }
+  done
+}
 
   androidKeystore
 

