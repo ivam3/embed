@@ -66,7 +66,7 @@ def findlauncheractivity(amanifest)
     amanifest.remove_namespaces!
     package_node = amanifest.xpath("//manifest").first
     if package_node.nil?
-      raise "No se encontró el nodo <manifest> en AndroidManifest.xml"
+      raise "Couldn't find node <manifest> in AndroidManifest.xml"
     end
     package = package_node["package"]
 # COMMENT LINE TO ADD IA SOLUTION
