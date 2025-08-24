@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-gem 'sqlite3', '~>1.3.0'
+gem 'sqlite3', '~>1.7.3'
 
 # separate from test as simplecov is not run on travis-ci
 group :coverage do
