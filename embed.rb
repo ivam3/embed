@@ -514,6 +514,6 @@ if !status.success? || apksigner_verify.to_s.include?('DOES NOT VERIFY') || apks
   raise RuntimeError, 'Signature verification failed.'
   exit(1)
 else
-  # cleaning_up()
+  cleaning_up()
   print "[DONE]─➤ Infected file is ready in: ".green,"#{cwd}/#{final_apk}."
 end
