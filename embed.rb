@@ -408,7 +408,6 @@ Dir.glob(smalifile) do |path|
   relative_path = path.sub(/^#{smali_root}\//, "")
   first_dir = relative_path.split("/").first
   payload_dir = File.join(smali_root, first_dir, apk_name, "stage")
-  puts payload_dir
   FileUtils.mkdir_p(payload_dir)
   FileUtils.mv file, File.join(payload_dir, "#{apk_name}.smali")
 end
