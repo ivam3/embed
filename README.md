@@ -2,7 +2,7 @@
 This tool creates a payload with metasploit framework and injected into a legitimate APK.
 
 ### IA ASSISTANT
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ivam3/embed)👈🏼
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ivam3/embed)
 
 Join to [deepwiki](https://deepwiki.com/ivam3/embed) and learn more about this project asking to our IA assistant trained with all the information about this project and its tools.
 
