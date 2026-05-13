@@ -1,6 +1,9 @@
 # EMBED v.3.0
 This tool creates a payload with metasploit framework and injected into a legitimate APK.
 
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ivam3/embed)
+
 	DISCLAIMER
 If the law is violated with it's use, this would be the responsibility of the user who handled it..
 Ivam3 is not responsible for the misuse that can be given to everything that this laboratory entails
