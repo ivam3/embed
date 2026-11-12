@@ -1,5 +1,5 @@
 #!/system/bin/env bash
-# Coded by Ivam3 on Ago 2018
+# Coded by Ivam3 in Aug 2018
 #set -euo pipefail
 IFS=$'\n\t'
 trap ctrl_c 2
@@ -115,13 +115,11 @@ install(){
         }
     }
   done
-}
 
   androidKeystore
 
   printf "$Y(_>)─➤$W Installing ruby gems.\n"
   gem install bundle
-  bundle update --bundler
   bundle install -j$(nproc --all) --verbose
 
 }
